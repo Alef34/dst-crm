@@ -3,20 +3,24 @@
 ## Kroky na nastavenie Firebase Google Sign-in:
 
 ### 1. Firebase projekt
+
 - Prejdite na https://console.firebase.google.com
 - Vytvorte nový projekt alebo vyberte existujúci
 
 ### 2. Nastavenie autentifikácie
+
 - V Firebase konzole prejdite na "Authentication"
 - Kliknite na "Get started"
 - V "Sign-in method" pridajte "Google"
 - Aktivujte Google provider
 
 ### 3. Konfigurácia Web SDK
+
 - V "Project settings" skopírujte Web API kľúč
 - Nahraďte hodnoty v `.env.local` súbore
 
 ### 4. Firestore databáza
+
 - V Firebase konzole vytvorte "Cloud Firestore"
 - Zvolite "Start in test mode" (pre vývoj)
 - Vytvorte kolekciu "users"
@@ -33,7 +37,7 @@ service cloud.firestore {
     match /users/{userId} {
       allow read, write: if request.auth.uid == userId;
     }
-    
+
     // Admin môže čítať všetko
     match /{document=**} {
       allow read: if request.auth.token.admin == true;
@@ -46,12 +50,14 @@ service cloud.firestore {
 ### 6. Nastavenie Admin roly
 
 Pre nastavenie admin roly:
+
 - Prejdite do Firestore
 - Kolekcia "users"
 - Otvorte dokument konkrétneho užívateľa
 - Zmeňte pole "role" z "user" na "admin"
 
 Príklad dokumentu:
+
 ```json
 {
   "email": "user@example.com",
@@ -82,13 +88,13 @@ import { useAuth } from './context/AuthContext';
 
 export const MyComponent = () => {
   const { user, role, isAdmin, loading } = useAuth();
-  
+
   if (loading) return <div>Načítavanie...</div>;
-  
+
   if (isAdmin) {
     return <div>Admin panel</div>;
   }
-  
+
   return <div>Užívateľský panel</div>;
 };
 ```
