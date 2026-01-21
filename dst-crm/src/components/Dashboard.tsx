@@ -2,7 +2,6 @@ import { useAuth } from '../context/AuthContext';
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import { useNavigate } from 'react-router-dom';
-import { UserProfile } from './UserProfile';
 import { ImportStudents } from './ImportStudents';
 import { AllowedEmails } from './AllowedEmails';
 import { PendingRegistrations } from './PendingRegistrations';
