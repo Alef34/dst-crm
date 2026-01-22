@@ -8,6 +8,7 @@ import { PendingRegistrations } from './PendingRegistrations';
 import { UsersManagement } from './UsersManagement';
 import { useState } from 'react';
 import '../styles/Dashboard.css';
+import { UserProfile } from './UserProfile';
 
 export const Dashboard = () => {
   const [adminTab, setAdminTab] = useState<'import' | 'emails' | 'pending' | 'users'>('import');
