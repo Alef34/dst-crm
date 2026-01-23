@@ -99,7 +99,7 @@ export const UserProfile = () => {
   return (
     <div className="user-profile-container">
       <div className="profile-header">
-        <h2>Môj profil</h2>
+        <h1>Môj profil</h1>
         {!isEditing && (
           <button className="edit-btn" onClick={() => setIsEditing(true)}>
             Upraviť
