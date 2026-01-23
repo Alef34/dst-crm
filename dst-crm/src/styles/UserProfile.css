@@ -7,7 +7,7 @@
 .profile-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items:center;
   margin-bottom: 30px;
   border-bottom: 2px solid #ecf0f1;
   padding-bottom: 15px;
@@ -21,7 +21,7 @@
 
 .edit-btn {
   padding: 10px 20px;
-  background-color: #3498db;
+  background-color:red;
   color: white;
   border: none;
   border-radius: 6px;
@@ -35,7 +35,7 @@
 }
 
 .profile-card {
-  background: white;
+  background: gray;
   border-radius: 8px;
   padding: 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -60,15 +60,16 @@
 
 .field-label {
   font-weight: 600;
-  color: #555;
+  color:  #711b1b;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .field-value {
-  color: #333;
+  color: #520dd2;
   font-size: 16px;
+  font-weight: bold;
   padding: 8px;
   background-color: #f8f9fa;
   border-radius: 4px;
