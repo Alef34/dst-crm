@@ -20,7 +20,10 @@ interface StudentData {
   [key: string]: string;
 }
 
-export const UserProfile = () => {
+// Funkcia tvoriaca komponent UserProfile --> uzivatelsky profil
+
+export const UserProfile = () => { 
+  //premene
   const { user } = useAuth();
   const [studentData, setStudentData] = useState<StudentData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
