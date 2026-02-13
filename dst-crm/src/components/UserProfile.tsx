@@ -20,6 +20,20 @@ interface StudentData {
   [key: string]: string;
 }
 
+
+//use for the student payments
+
+  interface PaymentRow {
+  id: string;
+  date: Date | null;
+  amount: number;
+  currency: string;
+  ibanFrom: string;
+  message?: string;
+  senderName?: string;
+}
+ 
+
 // Funkcia tvoriaca komponent UserProfile --> uzivatelsky profil
 
 export const UserProfile = () => { 
@@ -96,6 +110,98 @@ export const UserProfile = () => {
     return <div className="error">Študentský záznam nenájdený</div>;
   }
 
+
+// the progress ber numbers
+const totalAmount = Number(String(studentData?.AMount || '0').replace(',', '.')) || 0;
+
+// paid so far = on progres bar
+const paidSoFar = 0; // <- replace later with sum of payments
+const progressPercent =
+  totalAmount > 0 ? Math.min(100, Math.max(0, (paidSoFar / totalAmount) * 100)) : 0;
+  
+//the payments reminders in the profile -- THEY NEED TO BE CONNECTED TO THE AUTOMATIC REMINDER, ADN TO THE ADMIN SO WE CAN OVERRIDE THEM, WHEN NEEDED -- THESE JUST SHOW THE DEADLINS
+type PaymentPlan = "Year" | "Half-year" | "Monthly";
+
+function getSchoolYearStart(today: Date) {
+  // School year starts Sep 1
+  const year = today.getMonth() >= 8 ? today.getFullYear() : today.getFullYear() - 1; // Sep=8
+  return year; // 2025 means 2025/2026
+}
+
+function makeDateLocal(y: number, m: number, d: number) {
+  return new Date(y, m, d, 12, 0, 0, 0);
+}
+
+function formatSK(date: Date) {
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const yy = date.getFullYear();
+  return `${dd}.${mm}.${yy}`;
+}
+
+function getPlanFromStudent(typeOfPaymentRaw: string | undefined): PaymentPlan {
+  const t = (typeOfPaymentRaw || "").toLowerCase();
+
+  if (t.includes("year") || t.includes("roč")) return "Year";
+  if (t.includes("half") || t.includes("pol")) return "Half-year";
+  if (t.includes("month") || t.includes("mesa")) return "Monthly";
+  //is meissing defall fallbakc?
+return "Year";
+}
+
+function getDeadlinesForPlan(plan: PaymentPlan, schoolYearStart: number) {
+  const y0 = schoolYearStart;      // Sep-Dec
+  const y1 = schoolYearStart + 1;  // Jan-Jun
+
+  const sep30 = makeDateLocal(y0, 8, 30);
+
+  if (plan === "Year") {
+    return [sep30];
+  }
+
+  if (plan === "Half-year") {
+    return [
+      sep30,
+      makeDateLocal(y1, 1, 28), // Feb 28
+    ];
+  }
+
+  // Monthly
+  return [
+    sep30,
+    makeDateLocal(y0, 9, 31),  // Oct 31
+    makeDateLocal(y0, 10, 30), // Nov 30
+    makeDateLocal(y0, 11, 31), // Dec 31
+    makeDateLocal(y1, 0, 31),  // Jan 31
+    makeDateLocal(y1, 1, 28),  // Feb 28
+    makeDateLocal(y1, 2, 31),  // Mar 31
+    makeDateLocal(y1, 3, 30),  // Apr 30
+    makeDateLocal(y1, 4, 31),  // May 31
+    makeDateLocal(y1, 5, 30),  // Jun 30
+  ];
+}
+
+function getNextPaymentDeadlineText(typeOfPaymentRaw: string | undefined, today = new Date()) {
+  const plan = getPlanFromStudent(typeOfPaymentRaw);
+  const schoolYearStart = getSchoolYearStart(today);
+  const deadlines = getDeadlinesForPlan(plan, schoolYearStart);
+
+  const sep1 = makeDateLocal(schoolYearStart, 8, 1);
+  if (today < sep1) {
+    return "Ešte nemáš deadline na platbu";
+  }
+
+  const next = deadlines.find(d => d.getTime() >= today.getTime());
+
+  if (!next) {
+    return "Jupííí, všetko uhradené";
+  }
+
+  return `Najbližší deadline: ${formatSK(next)}`;
+}
+
+
+/*
   return (
     <div className="user-profile-container">
       <div className="profile-header">
@@ -222,4 +328,181 @@ export const UserProfile = () => {
       </div>
     </div>
   );
-};
+}; 
+*/
+  return (
+    
+    
+    <div className="user-profile-container">
+
+
+      <div className="profile-grid">
+      {/* PHOTO */}
+        <aside className="profile-photo-card">
+          <img
+          className="profile-avatar"
+          src={user?.photoURL || "https://wallpapers.com/images/hd/cute-cat-eyes-profile-picture-uq3edzmg1guze2hh.jpg"}
+          alt="Profilová fotka"/>
+
+
+        {/* PAYMENT PROGRESS */}
+            <div className="payment-progress">
+              <div className="progress-title">Platby</div>
+
+              <div className="progress-wrap">
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill"
+                    style={{ height: `${progressPercent}%` }}
+                  />
+                </div>
+
+                <div className="progress-meta">
+                  <div><b>{paidSoFar.toFixed(0)} €</b> zaplatené</div>
+                  <div>{totalAmount.toFixed(0)} € celkom</div>
+                  <div className="progress-percent">{progressPercent.toFixed(0)}%</div>
+                </div>
+              </div>
+            </div>
+        </aside>        
+
+          {/* PROFILE CARD 1 editable*/}
+          <section className="profile-card">
+            <div className="card-head">
+                <h3 className="card-title">Osobné údaje</h3>
+
+              {!isEditing && (
+                <button className="edit-btn" onClick={() => setIsEditing(true)}>
+                  Upraviť
+                </button>
+              )}
+            </div>
+
+            {isEditing ? (
+                <form className="profile-form">
+                  <div className="form-group">
+                    <label htmlFor="Name">Meno</label>
+                    <input id="Name" type="text" name="Name" value={editedData?.Name || ''} onChange={handleInputChange} placeholder="Vaše meno" />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="Surname">Priezvisko</label>
+                    <input id="Surname" type="text" name="Surname" value={editedData?.Surname || ''} onChange={handleInputChange} placeholder="Vaše priezvisko" />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="Region">Región</label>
+                    <input id="Region" type="text" name="Region" value={editedData?.Region || ''} onChange={handleInputChange} placeholder="Váš región" />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="School">Škola</label>
+                    <input id="School" type="text" name="School" value={editedData?.School || ''} onChange={handleInputChange} placeholder="Vaša škola" />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="Mail">Email</label>
+                    <input id="Mail" type="email" name="Mail" value={editedData?.Mail || ''} onChange={handleInputChange} placeholder="Váš email" disabled/>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="TelephoneNumber">Telefónne číslo</label>
+                    <input id="TelephoneNumber" type="tel" name="TelephoneNumber" value={editedData?.TelephoneNumber || ''} onChange={handleInputChange} placeholder="Vaše telefónne číslo" />
+                  </div>
+                  <div className="form-group form-group-full">
+                    <label htmlFor="Note">Poznámka</label>
+                    <textarea id="Note" name="Note" value={editedData?.Note || ''} onChange={handleTextAreaChange} placeholder="Poznámka" rows={4} />
+                  </div>
+                  <div className="form-actions">
+                    <button type="button" className="save-btn" onClick={handleSave} disabled={isSaving}>
+                      {isSaving ? 'Ukladám...' : 'Uložiť'}
+                    </button>
+                    <button type="button" className="cancel-btn" onClick={handleCancel} disabled={isSaving}>
+                      Zrušiť
+                    </button>
+                  </div>
+                </form>
+                
+            ) : (
+                <div className="profile-view">
+                  <div className="profile-field">
+                    <span className="field-label">Meno:</span>
+                    <span className="field-value">{studentData?.Name || '-'}</span>
+                  </div>
+                  <div className="profile-field">
+                    <span className="field-label">Priezvisko:</span>
+                    <span className="field-value">{studentData?.Surname || '-'}</span>
+                  </div>
+                  <div className="profile-field">
+                    <span className="field-label">Región:</span>
+                    <span className="field-value">{studentData?.Region || '-'}</span>
+                  </div>
+                  <div className="profile-field">
+                    <span className="field-label">Škola:</span>
+                    <span className="field-value">{studentData?.School || '-'}</span>
+                  </div>
+                  <div className="profile-field">
+                    <span className="field-label">Email:</span>
+                    <span className="field-value">{studentData?.Mail || '-'}</span>
+                  </div>
+                  <div className="profile-field">
+                    <span className="field-label">Telefónne číslo:</span>
+                    <span className="field-value">{studentData?.TelephoneNumber || '-'}</span>
+                  </div>
+                  <div className="profile-field profile-field-full">
+                    <span className="field-label">Poznámka:</span>
+                    <span className="field-value">{studentData?.Note || '-'}</span>
+                  </div>
+                </div>
+            )}
+          </section>
+
+          {/* PROFILE CARD 2 is NOT editable*/}
+          <section className="profile-card profile-card-secondary">
+              
+              <div className="card-head">
+                <h3 className="card-title">Členské info</h3>
+              </div>
+
+              <div className="profile-view">
+                <div className="profile-field">
+                  <span className="field-label">Typ platby</span>
+                  <span className="field-value">{studentData?.TypeOfPayment || '-'}</span>
+                </div>
+
+                <div className="profile-field">
+                  <span className="field-label">Obdobie</span>
+                  <span className="field-value">{studentData?.Period || '-'}</span>
+                </div>
+
+                <div className="profile-field">
+                  <span className="field-label">Suma</span>
+                  <span className="field-value">{studentData?.AMount || '-'}</span>
+                </div>
+              
+                <div className="profile-field">
+                  <span className="field-label">Variabilný symbol</span>
+                  <span className="field-value mono">{studentData?.VS || '-'}</span>
+                </div>
+
+                <div className="profile-field profile-field-full">
+                  <span className="field-label">IBAN</span>
+                  <span className="field-value mono">
+                    SK02 8330 0000 0023 0154 8060 (Fio banka)
+                  </span>
+                </div>
+
+                <div className="profile-field profile-field-full">
+                  <span className="field-label">Najbližší deadline</span>
+                  <span className="field-value">
+                    {getNextPaymentDeadlineText(studentData?.TypeOfPayment)}
+                  </span>
+                </div>
+
+              </div>
+          </section>
+
+
+      </div>
+        
+    </div>
+
+
+  );
+}; 
+   

@@ -1,11 +1,13 @@
+/* backgroud*/
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f0f044 25%, #b98204 100%);
 }
 
+/* the white big box*/
 .login-box {
   background: white;
   padding: 40px;
@@ -16,12 +18,14 @@
   width: 100%;
 }
 
+/* prihlasenie -- name*/
 .login-box h1 {
   color: #333;
   margin-bottom: 30px;
   font-size: 28px;
 }
 
+/* Prihlasenie/registracia/ ziadost o pristup*/
 .mode-tabs {
   display: flex;
   gap: 0;
@@ -29,6 +33,7 @@
   border-bottom: 2px solid #ecf0f1;
 }
 
+/* Prihlasenie/registracia/ ziadost o pristup -- form*/
 .mode-tab {
   flex: 1;
   padding: 12px 0;
@@ -42,15 +47,18 @@
   font-size: 14px;
 }
 
+/* ?*/
 .mode-tab:hover {
   color: #333;
 }
 
+/* Prihlasenie/registracia/ ziadost o pristup - how it look aster the click*/
 .mode-tab.active {
-  color: #667eea;
-  border-bottom-color: #667eea;
+  color: #de9d06;
+  border-bottom-color: #de9d06;
 }
 
+/* formatingi within the  white box*/
 .auth-form {
   display: flex;
   flex-direction: column;
@@ -58,6 +66,7 @@
   margin-bottom: 25px;
 }
 
+/* */
 .form-input {
   width: 100%;
   padding: 12px 15px;
@@ -68,12 +77,14 @@
   box-sizing: border-box;
 }
 
+/* */
 .form-input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #ea8066;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+/* erros formating*/
 .error-message {
   color: #e74c3c;
   font-size: 12px;
@@ -83,6 +94,7 @@
   margin-top: -5px;
 }
 
+/* formationg the text*/
 .request-info {
   display: flex;
   flex-direction: column;
@@ -90,6 +102,7 @@
   margin-bottom: 25px;
 }
 
+/* text itself*/
 .request-info p {
   color: #666;
   font-size: 14px;
@@ -97,10 +110,11 @@
   margin: 0;
 }
 
+/* formatign of the request buttom*/
 .request-link-btn {
   width: 100%;
   padding: 12px 24px;
-  background-color: #9b59b6;
+  background-color: #de9d06;
   color: white;
   border: none;
   border-radius: 6px;
@@ -110,19 +124,23 @@
   transition: all 0.3s ease;
 }
 
+/* Prihlasenie/registracia/ ziadost o pristup*/
 .request-link-btn:hover {
-  background-color: #8e44ad;
-  box-shadow: 0 4px 12px rgba(155, 89, 182, 0.4);
+  background-color: #6e4e03;
+  box-shadow: 0 4px 12px rgba(182, 140, 89, 0.4);
 }
 
-.request-link-btn:active {
-  transform: scale(0.98);
+/* */
+.request-link-btn:hover {
+  background-color: #6e4e03;
+  box-shadow: 0 4px 12px rgba(182, 140, 89, 0.4);
 }
 
+/* */
 .submit-btn {
   width: 100%;
   padding: 12px 24px;
-  background-color: #667eea;
+  background-color: #de9d06;
   color: white;
   border: none;
   border-radius: 6px;
@@ -132,20 +150,24 @@
   transition: all 0.3s ease;
 }
 
+/* the focus --> colour around a plce i am  writing in*/
 .submit-btn:hover:not(:disabled) {
-  background-color: #5568d3;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  background-color: #6e4e03;
+  box-shadow: 0 4px 12px rgba(246, 192, 56, 0.349);
 }
 
+/* */
 .submit-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
+/**/
 .submit-btn:active:not(:disabled) {
   transform: scale(0.98);
 }
 
+/* 
 .divider {
   color: #999;
   font-size: 12px;
@@ -171,17 +193,21 @@
   transition: all 0.3s ease;
 }
 
+
 .google-signin-btn:hover {
   background: #f8f8f8;
   border-color: #999;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+
 .google-signin-btn:active {
   transform: scale(0.98);
 }
+
 
 .google-icon {
   width: 20px;
   height: 20px;
 }
+*/

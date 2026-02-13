@@ -1,15 +1,16 @@
 .dashboard-container {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #5c5c5c;
 }
 
 .dashboard-header {
-  background: white;
+  background: #4b4a4a;
   padding: 20px 40px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
 }
 
 .header-content {
@@ -19,7 +20,7 @@
 }
 
 .dashboard-header h1 {
-  color: #333;
+  color: white;
   margin: 0;
   font-size: 24px;
 }
@@ -39,13 +40,20 @@
 }
 
 .role-badge.admin {
-  background-color: #ff6b6b;
+  background-color: #fd5300;
+
   color: white;
 }
 
 .role-badge.user {
-  background-color: #4ecdc4;
-  color: white;
+  background-color: #f3f343;
+  color: #4b4a4a;
+  padding: px 10px;
+  font-size: 14px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+
+
 }
 
 .user-avatar {
@@ -55,19 +63,44 @@
   object-fit: cover;
 }
 
+
+
 .logout-btn {
-  padding: 8px 20px;
-  background-color: #ff6b6b;
+  padding: 10px 20px;
+  background-color: #fd5300;
   color: white;
+  font-size: 15px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 750;
   transition: background-color 0.3s ease;
+  letter-spacing: 0.07em;
+  
+ 
+}
+  
+
+.logout-btn:hover, .change-credentials-btn:hover {
+  background-color: #5c5c5c;
 }
 
-.logout-btn:hover {
-  background-color: #ff5252;
+.change-credentials-btn{
+   padding: 10px 20px;
+  background-color: #ffa5eb;
+  color: white;
+  font-size: 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 750;
+  transition: background-color 0.3s ease;
+  letter-spacing: 0.07em;
+
+  
+
+  
+  
 }
 
 .dashboard-main {

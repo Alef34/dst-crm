@@ -285,8 +285,12 @@ export const Login = () => {
             </button>
           </div>
         )}
+        
+
+      {/*}
 
         <div className="divider">alebo</div>
+
 
         <button onClick={handleGoogleSignIn} className="google-signin-btn">
           <svg className="google-icon" viewBox="0 0 24 24">
@@ -297,6 +301,9 @@ export const Login = () => {
           </svg>
           Prihlásiť sa cez Google
         </button>
+      */}
+
+
       </div>
     </div>
   );

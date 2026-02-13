@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f0f044 25%, #b98204 100%);
   padding: 20px;
 }
 
@@ -46,8 +46,8 @@
 
 .form-input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #de9d06;
+  box-shadow: 0 0 0 3px rgba(246, 192, 56, 0.349);
 }
 
 .form-textarea {
@@ -63,8 +63,8 @@
 
 .form-textarea:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #de9d06;
+  box-shadow: 0 0 0 3px rgba(246, 192, 56, 0.349);
 }
 
 .error-message {
@@ -75,9 +75,10 @@
   border-radius: 4px;
 }
 
+/*this is the main submit button */
 .submit-btn {
   padding: 12px 24px;
-  background-color: #667eea;
+  background-color: #de9d06;
   color: white;
   border: none;
   border-radius: 6px;
@@ -88,8 +89,8 @@
 }
 
 .submit-btn:hover:not(:disabled) {
-  background-color: #5568d3;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  background-color: #6e4e03;
+  box-shadow: 0 4px 12px rgba(182, 140, 89, 0.4);
 }
 
 .submit-btn:disabled {

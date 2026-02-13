@@ -10,10 +10,23 @@ import { useState } from 'react';
 import '../styles/Dashboard.css';
 import { UserProfile } from './UserProfile';
 
+
+
 export const Dashboard = () => {
   const [adminTab, setAdminTab] = useState<'import' | 'emails' | 'pending' | 'users'>('import');
   const { user, role, isAdmin } = useAuth();
   const navigate = useNavigate();
+
+  //changing email and password
+  const [showCreds, setShowCreds] = useState(false);
+  const [newEmail, setNewEmail] = useState(user?.email || '');
+  const [newPassword, setNewPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [credError, setCredError] = useState('');
+  const [credMsg, setCredMsg] = useState('');
+  const [credLoading, setCredLoading] = useState(false);
+
+  
 
   const handleLogout = async () => {
     try {
@@ -37,6 +50,11 @@ export const Dashboard = () => {
           </div>
         </div>
         <button onClick={handleLogout} className="logout-btn">Odhlásiť sa</button>
+        <button onClick={() => setShowCreds(!showCreds)} className="change-credentials-btn">Prihlasavacie údaje</button>
+
+        
+
+
       </header>
 
       <main className="dashboard-main">
