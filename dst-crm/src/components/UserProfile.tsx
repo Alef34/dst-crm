@@ -35,6 +35,7 @@ interface StudentData {
  
 
 // Funkcia tvoriaca komponent UserProfile --> uzivatelsky profil
+//poznamka
 
 export const UserProfile = () => { 
   //premene
