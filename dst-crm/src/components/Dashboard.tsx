@@ -9,11 +9,13 @@ import { UsersManagement } from './UsersManagement';
 import { useState } from 'react';
 import '../styles/Dashboard.css';
 import { UserProfile } from './UserProfile';
+import PaymentsManagement from './PaymentsManagement';
+import StudentsManagement from './StudentsManagement';
 
 
 
 export const Dashboard = () => {
-  const [adminTab, setAdminTab] = useState<'import' | 'emails' | 'pending' | 'users'>('import');
+  const [adminTab, setAdminTab] = useState<'import' | 'students'| 'emails' | 'payments' | 'pending' | 'users'>('import');
   const { user, role, isAdmin } = useAuth();
   const navigate = useNavigate();
 
@@ -85,11 +87,26 @@ export const Dashboard = () => {
               >
                 Správa užívateľov
               </button>
+              <button
+                className={`tab-btn ${adminTab === 'payments' ? 'active' : ''}`}
+                onClick={() => setAdminTab('payments')}
+              >
+                Správa platieb
+              </button>
+
+              <button
+                className={`tab-btn ${adminTab === 'students' ? 'active' : ''}`}
+                onClick={() => setAdminTab('students')}
+              >
+                Správa študentov
+              </button>
             </div>
             {adminTab === 'pending' && <PendingRegistrations />}
             {adminTab === 'import' && <ImportStudents />}
             {adminTab === 'emails' && <AllowedEmails />}
             {adminTab === 'users' && <UsersManagement />}
+            {adminTab === 'payments' && <PaymentsManagement />}
+            {adminTab === 'students' && <StudentsManagement />}
           </div>
         ) : (
           <UserProfile />

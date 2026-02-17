@@ -3,43 +3,31 @@ import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import '../styles/ImportStudents.css';
 
-interface StudentRecord {
-  Name: string;
-  Surname: string;
-  Region: string;
-  School: string;
-  Mail: string;
-  TelephoneNumber: string;
-  TypeOfPayment: string;
-  Period: string;
-  AMount: string;
-  IBAN: string;
-  Note: string;
-  VS: string;
-}
+
 
 interface StudentRecord {
-  Name: string;
-  Surname: string;
-  Region: string;
-  School: string;
-  Mail: string;
-  TelephoneNumber: string;
-  TypeOfPayment: string;
-  Period: string;
-  AMount: string;
-  IBAN: string;
-  Note: string;
-  VS: string;
+  name: string;
+  surname: string;
+  region: string;
+  school: string;
+  mail: string;
+  telephoneNumber: string;
+  typeOfPayment: string;
+  period: string;
+  amount: string;
+  iban: string;
+  note: string;
+  vs: string;
 }
 interface PaymentInfo {
-  VS:string;
+  vs:string;
   amount: string;
   date:Date;
   message:string;
   senderIban:string;
   senderName:string
 }
+
 
 export const ImportStudents = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -50,6 +38,7 @@ export const ImportStudents = () => {
   const [messagePayments, setMessagePayments] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
   const [messageTypePayments, setMessageTypePayments] = useState<'successPayments' | 'errorPayments'>('successPayments');
+  
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -81,11 +70,13 @@ export const ImportStudents = () => {
     setImporting(true);
     try {
       const text = await file.text();
+      console.log(text);
       const students: StudentRecord[] = JSON.parse(text);
-
+console.log("1");
       if (!Array.isArray(students)) {
         throw new Error('JSON musí obsahovať pole študentov');
       }
+      console.log("2");
 
       let successCount = 0;
       let errorCount = 0;
@@ -93,31 +84,31 @@ export const ImportStudents = () => {
       for (const student of students) {
         try {
           // Validácia povinných polí
-          if (!student.Mail || !student.Name || !student.Surname) {
+          if (!student.mail || !student.name || !student.surname) {
             errorCount++;
             continue;
           }
 
           // Uloženie do Firestore
           await addDoc(collection(db, 'students'), {
-            Name: student.Name,
-            Surname: student.Surname,
-            Region: student.Region || '',
-            School: student.School || '',
-            Mail: student.Mail,
-            TelephoneNumber: student.TelephoneNumber || '',
-            TypeOfPayment: student.TypeOfPayment || '',
-            Period: student.Period || '',
-            AMount: student.AMount || '',
-            IBAN: student.IBAN || '',
-            Note: student.Note || '',
-            VS: student.VS || '',
+            name: student.name || '',
+            surname: student.surname || '',
+            region: student.region || '',
+            school: student.school || '',
+            mail: student.mail || '',
+            telephoneNumber: student.telephoneNumber || '',
+            typeOfPayment: student.typeOfPayment || '',
+            period: student.period || '',
+            amount: student.amount || '',
+            iban: student.iban || '',
+            note: student.note || '',
+            vs: student.vs || '',
             importedAt: new Date(),
           });
 
           successCount++;
         } catch (error) {
-          console.error('Chyba pri importovaní študenta:', student.Mail, error);
+          console.error('Chyba pri importovaní študenta:', student.mail, error);
           errorCount++;
         }
       }
@@ -162,17 +153,17 @@ export const ImportStudents = () => {
 
           // Uloženie do Firestore
           await addDoc(collection(db, 'payments'), {
-            Date: payment.date,
-            Amount: payment.amount,
+            date: payment.date,
+            amount: payment.amount,
             senderIban: payment.senderIban || '',
             senderName: payment.senderName || '',
-            vs: payment.VS || '',
+            vs: payment.vs || '',
             message: payment.message || '',
           });
 
           successCount++;
         } catch (error) {
-            console.error('Chyba pri importovaní platby:', payment.VS, error);
+            console.error('Chyba pri importovaní platby:', payment.vs, error);
           errorCount++;
         }
       }
@@ -219,18 +210,18 @@ export const ImportStudents = () => {
             <h3>Formát JSON súboru:</h3>
             <pre>{`[
                     {
-  "Name": "Meno",
-  "Surname": "Priezvisko",
-  "Region": "Región",
-  "School": "Škola",
-  "Mail": "email@example.com",
-  "TelephoneNumber": "+421950123456",
-  "TypeOfPayment": "Bankový prevod",
-  "Period": "2025-2026",
-  "AMount": "500",
-  "IBAN": "SK1234567890",
-  "VS": "123456",
-  "Note": "Poznámka"
+  "name": "Meno",
+  "surname": "Priezvisko",
+  "region": "Región",
+  "school": "Škola",
+  "mail": "email@example.com",
+  "telephoneNumber": "+421950123456",
+  "typeOfPayment": "Bankový prevod",
+  "period": "2025-2026",
+  "amount": "500",
+  "iban": "SK1234567890",
+  "vs": "123456",
+  "note": "Poznámka"
                     }
                   ]`}</pre>
           </div>
@@ -279,7 +270,7 @@ export const ImportStudents = () => {
     "senderIban": "číslo účtu",
     "message": "popis platby",
     "senderName": "meno odosielateľa",
-    "VS": "variabilný symbol"
+    "vs": "variabilný symbol"
   },
 
                   ]`}</pre>
