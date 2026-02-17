@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../config/firebase';
-import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, updateDoc, doc, orderBy } from 'firebase/firestore';
 import '../styles/UserProfile.css';
 
 interface StudentData {
@@ -19,20 +19,15 @@ interface StudentData {
   VS: string;
   [key: string]: string;
 }
-
-
-//use for the student payments
-
-  interface PaymentRow {
-  id: string;
-  date: Date | null;
-  amount: number;
-  currency: string;
-  ibanFrom: string;
-  message?: string;
-  senderName?: string;
+interface PaymentInfo {
+  VS:string;
+  amount: string;
+  date:Date;
+  message?:string;
+  senderIban:string;
+  senderName?:string
 }
- 
+
 
 // Funkcia tvoriaca komponent UserProfile --> uzivatelsky profil
 //poznamka
@@ -46,31 +41,79 @@ export const UserProfile = () => {
   const [editedData, setEditedData] = useState<StudentData | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [studentDocId, setStudentDocId] = useState<string>('');
+  const [payments, setPayments] = useState<PaymentInfo[]>([]);
+  
 
-  useEffect(() => {
-    const fetchStudentData = async () => {
-      if (!user?.email) return;
+useEffect(() => {
+  const fetchStudentAndPayments = async () => {
+    if (!user?.email) return;
 
-      try {
-        const q = query(collection(db, 'students'), where('Mail', '==', user.email));
-        const querySnapshot = await getDocs(q);
+    try {
+      // 1) nájdi študenta podľa mailu
+      const studentQ = query(
+        collection(db, "students"),
+        where("Mail", "==", user.email)
+      );
 
-        if (!querySnapshot.empty) {
-          const studentDoc = querySnapshot.docs[0];
-          const data = studentDoc.data() as StudentData;
-          setStudentData(data);
-          setEditedData(data);
-          setStudentDocId(studentDoc.id);
-        }
+      const studentSnap = await getDocs(studentQ);
+
+      if (studentSnap.empty) {
+        setStudentData(null as any); // alebo ako riešiš "nenájdené"
+        setPayments([]);
         setLoading(false);
-      } catch (error) {
-        console.error('Chyba pri načítaní údajov študenta:', error);
-        setLoading(false);
+        return;
       }
-    };
 
-    fetchStudentData();
-  }, [user]);
+      const studentDoc = studentSnap.docs[0];
+      const student = studentDoc.data() as StudentData;
+
+      setStudentData(student);
+      setEditedData(student);
+      setStudentDocId(studentDoc.id);
+
+      // 2) ak má VS, dotiahni platby
+      
+      const vs = String(student.VS ?? "").trim();
+
+      console.log("Hledám platby pro VS:", vs);
+
+      if (!vs) {
+        setPayments([]);
+        setLoading(false);
+        return;
+      }
+
+      const paymentsQ = query(
+        collection(db, "payments"),
+        where("VS", "==", vs),
+        orderBy("date", "desc") // vyžaduje index, ak bude treba Firestore ti ho ponúkne vytvoriť
+      );
+
+      const paymentsSnap = await getDocs(paymentsQ);
+      const paymentsData = paymentsSnap.docs.map((d) => {
+        const p = d.data() as any;
+        return {
+          VS: p.VS,
+          amount: p.amount,
+          // ak je date Firestore Timestamp:
+          date: p.date?.toDate ? p.date.toDate() : p.date,
+          message: p.message ?? "",
+          senderIban: p.senderIban ?? "",
+          senderName: p.senderName ?? "",
+        } as PaymentInfo;
+      });
+
+      setPayments(paymentsData);
+      setLoading(false);
+    } catch (error) {
+      console.error("Chyba pri načítaní profilu/platieb:", error);
+      setLoading(false);
+    }
+  };
+
+  fetchStudentAndPayments();
+}, [user]);
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -349,6 +392,9 @@ function getNextPaymentDeadlineText(typeOfPaymentRaw: string | undefined, today 
         {/* PAYMENT PROGRESS */}
             <div className="payment-progress">
               <div className="progress-title">Platby</div>
+      
+              <div className="progress-info">{payments[0].senderIban } platených</div>
+  
 
               <div className="progress-wrap">
                 <div className="progress-bar">

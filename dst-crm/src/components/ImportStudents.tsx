@@ -18,6 +18,29 @@ interface StudentRecord {
   VS: string;
 }
 
+interface StudentRecord {
+  Name: string;
+  Surname: string;
+  Region: string;
+  School: string;
+  Mail: string;
+  TelephoneNumber: string;
+  TypeOfPayment: string;
+  Period: string;
+  AMount: string;
+  IBAN: string;
+  Note: string;
+  VS: string;
+}
+interface PaymentInfo {
+  VS:string;
+  amount: string;
+  date:Date;
+  message:string;
+  senderIban:string;
+  senderName:string
+}
+
 export const ImportStudents = () => {
   const [file, setFile] = useState<File | null>(null);
   const [importing, setImporting] = useState(false);
