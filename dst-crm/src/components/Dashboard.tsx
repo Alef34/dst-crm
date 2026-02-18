@@ -4,7 +4,7 @@ import { auth } from '../config/firebase';
 import { useNavigate } from 'react-router-dom';
 import { ImportStudents } from './ImportStudents';
 import { AllowedEmails } from './AllowedEmails';
-import { PendingRegistrations } from './PendingRegistrations';
+//import { PendingRegistrations } from './PendingRegistrations';
 import { UsersManagement } from './UsersManagement';
 import { useState } from 'react';
 import '../styles/Dashboard.css';
@@ -53,8 +53,6 @@ export const Dashboard = () => {
           </div>
         </div>
         <button onClick={handleLogout} className="logout-btn">Odhlásiť sa</button>
-        <button onClick={() => setShowCreds(!showCreds)} className="change-credentials-btn">Prihlasavacie údaje</button>
-
         
 
 
@@ -64,17 +62,19 @@ export const Dashboard = () => {
         {isAdmin ? (
           <div className="admin-section">
             <div className="admin-tabs">
+              {/*}
               <button
                 className={`tab-btn ${adminTab === 'pending' ? 'active' : ''}`}
                 onClick={() => setAdminTab('pending')}
               >
                 Čakajúce registrácie
               </button>
+              */}
               <button
                 className={`tab-btn ${adminTab === 'import' ? 'active' : ''}`}
                 onClick={() => setAdminTab('import')}
               >
-                Import študentov
+                Import
               </button>
               <button
                 className={`tab-btn ${adminTab === 'emails' ? 'active' : ''}`}
@@ -109,7 +109,7 @@ export const Dashboard = () => {
                 Správa študentov
               </button>
             </div>
-            {adminTab === 'pending' && <PendingRegistrations />}
+            {/*{adminTab === 'pending' && <PendingRegistrations />} */}
             {adminTab === 'import' && <ImportStudents />}
             {adminTab === 'emails' && <AllowedEmails />}
             {adminTab === 'users' && <UsersManagement />}

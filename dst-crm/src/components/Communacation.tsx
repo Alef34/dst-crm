@@ -324,21 +324,25 @@ export const Communication: React.FC = () => {
         </table>
       </div>
 
-      <style jsx>{`
+      
+
+    <style jsx>{`
         .controls { display:flex; gap:12px; align-items:center; margin-bottom:12px; }
         .installments-table { width:100%; border-collapse:collapse; }
         .installments-table th, .installments-table td { padding:8px; border:1px solid #e6e6e6; text-align:left; vertical-align:middle; }
-        .row-paid { background:#e8f7e8; }      /* svetlozelená */
-        .row-partial { background:#fff7e0; }   /* svetločervená/žltá */
-        .row-unpaid { background:#fff5f5; }    /* svetloružová */
-        .row-overpaid { background:#e8f0ff; }  /* svetlomodrá pre nadplatok */
+        .row-paid { background:#e8f7e8; }      
+        .row-partial { background:#fff7e0; }  
+        .row-unpaid { background:#fff5f5; }    
+        .row-overpaid { background:#e8f0ff; }  
         .status-badge.paid { color: #0b7a0b; font-weight:600; }
         .status-badge.partial { color: #a06b00; font-weight:600; }
         .status-badge.unpaid { color: #a10000; font-weight:600; }
         .status-badge.overpaid { color: #0b47a6; font-weight:600; }
-        .diff.positive { color: #a10000; } /* expected > paid => dlh */
+        .diff.positive { color: #a10000; } 
         .diff.zero { color: #1f7a1f; }
       `}</style>
+      
+    
     </div>
   );
 };

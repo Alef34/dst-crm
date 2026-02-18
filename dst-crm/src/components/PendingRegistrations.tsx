@@ -1,3 +1,5 @@
+/*
+
 import { useState, useEffect } from 'react';
 import { collection, getDocs, deleteDoc, doc, addDoc, query, where, setDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
@@ -175,3 +177,4 @@ export const PendingRegistrations = () => {
     </div>
   );
 };
+*/

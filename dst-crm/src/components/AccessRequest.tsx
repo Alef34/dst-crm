@@ -1,3 +1,5 @@
+/*
+
 import { useState } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
@@ -94,3 +96,4 @@ export const AccessRequest = () => {
     </div>
   );
 };
+*/

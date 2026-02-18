@@ -9,24 +9,19 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 30px;
-  border-bottom: 2px solid red;
+  border-bottom: 2px solid whitesmoke;
   padding-bottom: 15px;
 }
 
-.users-management-header h2 {
-  color: #333;
-  font-size: 28px;
-  margin: 0 0 10px 0;
-}
-
 .users-management-header p {
-  color: #666;
-  font-size: 14px;
+   color: whitesmoke;
+  font-size: 13px;
   margin: 0;
+  font-weight: 500;
 }
 
 .users-management-card {
-  background: gray;
+  background: whitesmoke;
   border-radius: 8px;
   padding: 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -69,14 +64,14 @@
 }
 
 .users-table thead {
-  background-color: #1b68b6;
+  background-color: #686767;
 }
 
 .users-table th {
   padding: 15px;
   text-align: left;
   font-weight: 600;
-  color: #333;
+  color: whitesoke;
   border-bottom: 2px solid #ecf0f1;
   font-size: 13px;
   text-transform: uppercase;
@@ -85,20 +80,21 @@
 
 .users-table td {
   padding: 15px;
-  border-bottom: 1px solid #ecf0f1;
-  color: #666;
+  border-bottom: 1px solid #a9a9aa;
+  color: #4b4a4a;
   font-size: 14px;
+  font-weight: 600;
 }
 
+/* not clickable, nto neccesary */
+/*
 .users-table tbody tr:hover {
   background-color: gray;
 }
+*/
 
-.email-cell {
-  font-weight: 500;
-  color: #333;
-}
-
+/* define in teh dashboard */
+/*
 .role-badge {
   display: inline-block;
   padding: 6px 12px;
@@ -117,6 +113,7 @@
   background-color: #e6f2ff;
   color: #1971c2;
 }
+*/
 
 .role-select {
   padding: 8px 12px;

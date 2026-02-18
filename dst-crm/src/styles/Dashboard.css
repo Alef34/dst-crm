@@ -40,16 +40,19 @@
 }
 
 .role-badge.admin {
-  background-color: #fd5300;
-
-  color: white;
+  background-color: #ffa5eb;
+  color: #4b4a4a;
+  padding: px 10px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
 }
 
 .role-badge.user {
   background-color: #f3f343;
   color: #4b4a4a;
   padding: px 10px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 750;
   letter-spacing: 0.07em;
 
@@ -85,6 +88,7 @@
   background-color: #5c5c5c;
 }
 
+/*
 .change-credentials-btn{
    padding: 10px 20px;
   background-color: #ffa5eb;
@@ -96,12 +100,9 @@
   font-weight: 750;
   transition: background-color 0.3s ease;
   letter-spacing: 0.07em;
-
-  
-
-  
-  
 }
+*/
+
 
 .dashboard-main {
   padding: 40px;
@@ -109,10 +110,13 @@
   margin: 0 auto;
 }
 
+/* this creates all second names (student import, emails, and users)*/
 .dashboard-main h2 {
-  color: #333;
+  color: whitesmoke;
   margin-bottom: 30px;
   font-size: 28px;
+  margin: 0 0 20px 0;
+
 }
 
 .admin-features,
@@ -126,7 +130,7 @@
   display: flex;
   gap: 0;
   margin-bottom: 30px;
-  border-bottom: 2px solid #ecf0f1;
+  border-bottom: 2px solid whitesmoke;
 }
 
 .tab-btn {
@@ -134,7 +138,7 @@
   background-color: transparent;
   border: none;
   border-bottom: 3px solid transparent;
-  color: #666;
+  color: whitesmoke;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -142,12 +146,18 @@
 }
 
 .tab-btn:hover {
-  color: #333;
+  color: #ababab;
+  border-bottom-color: #ababab;
+  margin-bottom: 4px;
+  border-bottom-width: 3px;
 }
 
 .tab-btn.active {
-  color: #3498db;
-  border-bottom-color: #3498db;
+  color: #ffa5eb;
+  border-bottom-color: #ffa5eb;
+  margin-bottom: 2px;
+  border-bottom-width: 3px;
+
 }
 
 .feature-card {

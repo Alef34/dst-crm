@@ -213,6 +213,8 @@ export const Login = () => {
           >
             Registrácia
           </button>
+
+          {/*
           <button
             className={`mode-tab ${mode === 'request' ? 'active' : ''}`}
             onClick={() => {
@@ -222,6 +224,7 @@ export const Login = () => {
           >
             Žiadosť o prístup
           </button>
+          */}
         </div>
 
         {mode === 'login' ? (

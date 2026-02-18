@@ -12,16 +12,13 @@
   padding-bottom: 15px;
 }
 
-.import-header h2 {
-  color: #333;
-  font-size: 28px;
-  margin: 0 0 10px 0;
-}
+
 
 .import-header p {
-  color: #666;
-  font-size: 14px;
+  color: whitesmoke;
+  font-size: 13px;
   margin: 0;
+  font-weight: 500;
 }
 
 .import-card {

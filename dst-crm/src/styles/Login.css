@@ -4,12 +4,13 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f0f044 25%, #b98204 100%);
+  /*background: linear-gradient(135deg, #f0f044 25%, #b98204 100%);*/
+  background: linear-gradient(135deg, #6d6d6d 25%, #2b2b2b 100%);
 }
 
 /* the white big box*/
 .login-box {
-  background: white;
+  background: whitesmoke;
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
@@ -20,7 +21,7 @@
 
 /* prihlasenie -- name*/
 .login-box h1 {
-  color: #333;
+  color: #4b4a4a;
   margin-bottom: 30px;
   font-size: 28px;
 }
@@ -30,7 +31,7 @@
   display: flex;
   gap: 0;
   margin-bottom: 30px;
-  border-bottom: 2px solid #ecf0f1;
+  border-bottom: 2px solid #dcdcdc;
 }
 
 /* Prihlasenie/registracia/ ziadost o pristup -- form*/
@@ -40,23 +41,27 @@
   background-color: transparent;
   border: none;
   border-bottom: 3px solid transparent;
-  color: #999;
+  color: #818181;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 14px;
 }
 
-/* ?*/
-.mode-tab:hover {
-  color: #333;
-}
 
 /* Prihlasenie/registracia/ ziadost o pristup - how it look aster the click*/
 .mode-tab.active {
-  color: #de9d06;
-  border-bottom-color: #de9d06;
+  color: #4b4a4a;
+  border-bottom-color: #4b4a4a;
+  border-bottom-width: 3px;
+  font-weight: 700;
+
 }
+
+.mode-tab:hover {
+  color: #fd5300;
+  border-bottom-color: #fd5300;
+  margin-bottom: 4px;}
 
 /* formatingi within the  white box*/
 .auth-form {
@@ -94,53 +99,10 @@
   margin-top: -5px;
 }
 
-/* formationg the text*/
-.request-info {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-/* text itself*/
-.request-info p {
-  color: #666;
-  font-size: 14px;
-  line-height: 1.5;
-  margin: 0;
-}
-
-/* formatign of the request buttom*/
-.request-link-btn {
-  width: 100%;
-  padding: 12px 24px;
-  background-color: #de9d06;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-/* Prihlasenie/registracia/ ziadost o pristup*/
-.request-link-btn:hover {
-  background-color: #6e4e03;
-  box-shadow: 0 4px 12px rgba(182, 140, 89, 0.4);
-}
-
-/* */
-.request-link-btn:hover {
-  background-color: #6e4e03;
-  box-shadow: 0 4px 12px rgba(182, 140, 89, 0.4);
-}
-
-/* */
+/* THW MAIN SUBBITT BUTTON */
 .submit-btn {
-  width: 100%;
   padding: 12px 24px;
-  background-color: #de9d06;
+  background-color: #fd5300;
   color: white;
   border: none;
   border-radius: 6px;
@@ -149,24 +111,10 @@
   cursor: pointer;
   transition: all 0.3s ease;
 }
-
-/* the focus --> colour around a plce i am  writing in*/
 .submit-btn:hover:not(:disabled) {
   background-color: #6e4e03;
   box-shadow: 0 4px 12px rgba(246, 192, 56, 0.349);
 }
-
-/* */
-.submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/**/
-.submit-btn:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
 /* 
 .divider {
   color: #999;
@@ -209,5 +157,81 @@
 .google-icon {
   width: 20px;
   height: 20px;
+}
+*/
+
+/*styles for askign access*/
+
+/*
+
+.request-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+
+.request-info p {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+
+.request-link-btn {
+  width: 100%;
+  padding: 12px 24px;
+  background-color: #fd5300;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+.request-link-btn:hover {
+  background-color: #6e4e03;
+  box-shadow: 0 4px 12px rgba(182, 140, 89, 0.4);
+}
+
+
+.request-link-btn:hover {
+  background-color: #6e4e03;
+  box-shadow: 0 4px 12px rgba(182, 140, 89, 0.4);
+}
+
+
+.submit-btn {
+  width: 100%;
+  padding: 12px 24px;
+  background-color: #fd5300;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #6e4e03;
+  box-shadow: 0 4px 12px rgba(246, 192, 56, 0.349);
+}
+
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: scale(0.98);
 }
 */

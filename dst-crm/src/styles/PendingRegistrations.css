@@ -1,3 +1,5 @@
+/*
+
 .pending-reg-container {
   max-width: 900px;
   margin: 0 auto;
@@ -146,8 +148,9 @@
 .reject-btn:active {
   transform: scale(0.95);
 }
-
+*/
 /* Responzívnosť */
+/*
 @media (max-width: 768px) {
   .pending-reg-card {
     padding: 20px;
@@ -170,3 +173,4 @@
     flex: 1;
   }
 }
+*/
