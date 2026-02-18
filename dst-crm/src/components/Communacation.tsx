@@ -326,7 +326,7 @@ export const Communication: React.FC = () => {
 
       
 
-    <style jsx>{`
+    <style >{`
         .controls { display:flex; gap:12px; align-items:center; margin-bottom:12px; }
         .installments-table { width:100%; border-collapse:collapse; }
         .installments-table th, .installments-table td { padding:8px; border:1px solid #e6e6e6; text-align:left; vertical-align:middle; }
