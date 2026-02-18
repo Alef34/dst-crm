@@ -39,14 +39,18 @@ export const PaymentsManagement: React.FC = () => {
   const [payments, setPayments] = useState<PaymentInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState<"success" | "error">("success");
+  const [messageType, setMessageType] = useState<"success" | "error">(
+    "success"
+  );
 
-    const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
   // pre priradenie
   const [searchVS, setSearchVS] = useState("");
   const [studentResults, setStudentResults] = useState<StudentShort[]>([]);
-  const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(null);
+  const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(
+    null
+  );
   const [assigning, setAssigning] = useState(false);
 
   useEffect(() => {
@@ -57,7 +61,10 @@ export const PaymentsManagement: React.FC = () => {
     setLoading(true);
     try {
       // načítaj všetky platby, zoradené podľa dátumu (desc)
-      const paymentsQ = query(collection(db, "payments"), orderBy("date", "desc"));
+      const paymentsQ = query(
+        collection(db, "payments"),
+        orderBy("date", "desc")
+      );
       const snap = await getDocs(paymentsQ);
       const list: PaymentInfo[] = [];
       console.log("Načítané platby:", snap.size);
@@ -72,8 +79,12 @@ export const PaymentsManagement: React.FC = () => {
           senderIban: data.senderIban ?? "",
           senderName: data.senderName ?? "",
           matchedStudentId: data.matchedStudentId ?? null,
-          matchStatus: data.matchStatus ?? (data.matchedStudentId ? "matched" : "unmatched"),
-          createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : data.createdAt ?? null,
+          matchStatus:
+            data.matchStatus ??
+            (data.matchedStudentId ? "matched" : "unmatched"),
+          createdAt: data.createdAt?.toDate
+            ? data.createdAt.toDate()
+            : data.createdAt ?? null,
         });
       });
       setPayments(list);
@@ -164,77 +175,100 @@ export const PaymentsManagement: React.FC = () => {
     }
   };
 
-    const filteredPayments = payments.filter((p) => {
+  const filteredPayments = payments.filter((p) => {
     if (statusFilter === "all") return true;
     return (p.matchStatus ?? "unmatched") === statusFilter;
-    });
+  });
 
   if (loading) {
-    return <div className="payments-management-container">Načítavam platby...</div>;
+    return (
+      <div className="payments-management-container">Načítavam platby...</div>
+    );
   }
 
   return (
     <div className="payments-management-container">
       <div className="payments-management-header">
         <h2>Správa platieb</h2>
-        <p>Prehľad importovaných platieb, priraďovanie k študentom a ich správa</p>
+        <p>
+          Prehľad importovaných platieb, priraďovanie k študentom a ich správa
+        </p>
       </div>
 
-      {message && <div className={`message message-${messageType}`}>{message}</div>}
+      {message && (
+        <div className={`message message-${messageType}`}>{message}</div>
+      )}
 
       <div className="payments-card">
         {payments.length === 0 ? (
           <p className="empty-message">
-                Žiadne platby pre filter:{" "}
-                {statusFilter === "all"
-                ? "Všetky"
-                : statusFilter === "matched"
-                ? "Priradené"
-                : statusFilter === "ambiguous"
-                ? "Nejednoznačné"
-                : "Nepriradené"}
-            </p>
+            Žiadne platby pre filter:{" "}
+            {statusFilter === "all"
+              ? "Všetky"
+              : statusFilter === "matched"
+              ? "Priradené"
+              : statusFilter === "ambiguous"
+              ? "Nejednoznačné"
+              : "Nepriradené"}
+          </p>
         ) : (
           <>
-          <div className="filters-bar">
-  <div className="filters-left">
-    <span className="filters-label">Filter:</span>
+            <div className="filters-bar">
+              <div className="filters-left">
+                <span className="filters-label">Filter:</span>
 
-    <button
-      className={`filter-chip ${statusFilter === "all" ? "active" : ""}`}
-      onClick={() => setStatusFilter("all")}
-    >
-      Všetky ({payments.length})
-    </button>
+                <button
+                  className={`filter-chip ${
+                    statusFilter === "all" ? "active" : ""
+                  }`}
+                  onClick={() => setStatusFilter("all")}
+                >
+                  Všetky ({payments.length})
+                </button>
 
-    <button
-      className={`filter-chip ${statusFilter === "unmatched" ? "active" : ""}`}
-      onClick={() => setStatusFilter("unmatched")}
-    >
-      Nepriradené ({payments.filter(p => (p.matchStatus ?? "unmatched") === "unmatched").length})
-    </button>
+                <button
+                  className={`filter-chip ${
+                    statusFilter === "unmatched" ? "active" : ""
+                  }`}
+                  onClick={() => setStatusFilter("unmatched")}
+                >
+                  Nepriradené (
+                  {
+                    payments.filter(
+                      (p) => (p.matchStatus ?? "unmatched") === "unmatched"
+                    ).length
+                  }
+                  )
+                </button>
 
-    <button
-      className={`filter-chip ${statusFilter === "matched" ? "active" : ""}`}
-      onClick={() => setStatusFilter("matched")}
-    >
-      Priradené ({payments.filter(p => p.matchStatus === "matched").length})
-    </button>
+                <button
+                  className={`filter-chip ${
+                    statusFilter === "matched" ? "active" : ""
+                  }`}
+                  onClick={() => setStatusFilter("matched")}
+                >
+                  Priradené (
+                  {payments.filter((p) => p.matchStatus === "matched").length})
+                </button>
 
-    <button
-      className={`filter-chip ${statusFilter === "ambiguous" ? "active" : ""}`}
-      onClick={() => setStatusFilter("ambiguous")}
-    >
-      Nejednoznačné ({payments.filter(p => p.matchStatus === "ambiguous").length})
-    </button>
-  </div>
+                <button
+                  className={`filter-chip ${
+                    statusFilter === "ambiguous" ? "active" : ""
+                  }`}
+                  onClick={() => setStatusFilter("ambiguous")}
+                >
+                  Nejednoznačné (
+                  {payments.filter((p) => p.matchStatus === "ambiguous").length}
+                  )
+                </button>
+              </div>
 
-  <div className="filters-right">
-    <span className="filters-count">
-      Zobrazené: <b>{filteredPayments.length}</b>
-    </span>
-  </div>
-</div>
+              <div className="filters-right">
+                <span className="filters-count">
+                  Zobrazené: <b>{filteredPayments.length}</b>
+                </span>
+              </div>
+            </div>
             <div className="payments-table-wrapper">
               <table className="payments-table">
                 <thead>
@@ -258,11 +292,19 @@ export const PaymentsManagement: React.FC = () => {
                           ? (p.amount / 100).toFixed(2) // ak máš uložené v centoch
                           : String(p.amount)}
                       </td>
-                      <td>{p.date ? new Date(p.date).toLocaleString("sk-SK") : "-"}</td>
+                      <td>
+                        {p.date
+                          ? new Date(p.date).toLocaleString("sk-SK")
+                          : "-"}
+                      </td>
                       <td>{p.senderName || p.senderIban || "-"}</td>
                       <td className="message-cell">{p.message || "-"}</td>
                       <td>
-                        <span className={`status-badge ${p.matchStatus || "unmatched"}`}>
+                        <span
+                          className={`status-badge ${
+                            p.matchStatus || "unmatched"
+                          }`}
+                        >
                           {p.matchStatus === "matched"
                             ? "Priradené"
                             : p.matchStatus === "ambiguous"
@@ -273,6 +315,7 @@ export const PaymentsManagement: React.FC = () => {
                       <td>{p.matchedStudentId ?? "-"}</td>
                       <td>
                         <button
+                          style={{ color: "#007bff" }}
                           onClick={() => {
                             setSelectedPaymentId(p.id ?? null);
                             setSearchVS(p.vs ?? "");
@@ -283,10 +326,18 @@ export const PaymentsManagement: React.FC = () => {
                         </button>
 
                         {p.matchStatus === "matched" && p.matchedStudentId && (
-                          <button onClick={() => removeAssignment(p.id!)}>Vyčistiť</button>
+                          <button
+                            style={{ color: "#007bff" }}
+                            onClick={() => removeAssignment(p.id!)}
+                          >
+                            Vyčistiť
+                          </button>
                         )}
 
-                        <button onClick={() => deletePayment(p.id!)} className="danger">
+                        <button
+                          onClick={() => deletePayment(p.id!)}
+                          className="danger"
+                        >
                           Vymazať
                         </button>
                       </td>
@@ -309,8 +360,16 @@ export const PaymentsManagement: React.FC = () => {
                     }}
                     onBlur={() => searchStudentsByVS(searchVS)}
                   />
-                  <button onClick={() => searchStudentsByVS(searchVS)}>Hľadať</button>
-                  <button onClick={() => { setSelectedPaymentId(null); setStudentResults([]); setSearchVS(""); }}>
+                  <button onClick={() => searchStudentsByVS(searchVS)}>
+                    Hľadať
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedPaymentId(null);
+                      setStudentResults([]);
+                      setSearchVS("");
+                    }}
+                  >
                     Zrušiť
                   </button>
                 </div>
@@ -336,7 +395,9 @@ export const PaymentsManagement: React.FC = () => {
                             <td>{s.school || "-"}</td>
                             <td>
                               <button
-                                onClick={() => assignToStudent(selectedPaymentId, s.id)}
+                                onClick={() =>
+                                  assignToStudent(selectedPaymentId, s.id)
+                                }
                                 disabled={assigning}
                               >
                                 Priradiť k tomuto študentovi

@@ -1,4 +1,5 @@
 .users-management-container {
+  background-color: gray;
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
@@ -8,7 +9,7 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 30px;
-  border-bottom: 2px solid #ecf0f1;
+  border-bottom: 2px solid red;
   padding-bottom: 15px;
 }
 
@@ -25,7 +26,7 @@
 }
 
 .users-management-card {
-  background: white;
+  background: gray;
   border-radius: 8px;
   padding: 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -68,7 +69,7 @@
 }
 
 .users-table thead {
-  background-color: #f8f9fa;
+  background-color: #1b68b6;
 }
 
 .users-table th {
@@ -90,7 +91,7 @@
 }
 
 .users-table tbody tr:hover {
-  background-color: #f8f9fa;
+  background-color: gray;
 }
 
 .email-cell {

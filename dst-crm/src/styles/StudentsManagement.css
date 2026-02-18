@@ -21,11 +21,11 @@
 }
 
 .students-card {
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.08);
+  background: gray;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 14px;
   padding: 16px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
 .students-toolbar {
@@ -43,12 +43,12 @@
   max-width: 520px;
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(0,0,0,0.14);
+  border: 1px solid rgba(0, 0, 0, 0.14);
   outline: none;
 }
 
 .students-search:focus {
-  border-color: rgba(0,0,0,0.28);
+  border-color: rgba(0, 0, 0, 0.28);
 }
 
 .students-count {
@@ -70,19 +70,19 @@
   font-size: 13px;
   letter-spacing: 0.02em;
   padding: 12px 10px;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   opacity: 0.85;
   white-space: nowrap;
 }
 
 .students-table tbody td {
   padding: 12px 10px;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   vertical-align: top;
 }
 
 .students-table tbody tr:hover {
-  background: rgba(0,0,0,0.02);
+  background: rgba(0, 0, 0, 0.02);
 }
 
 .name-cell .name-strong {
@@ -96,12 +96,13 @@
 }
 
 .vs-cell {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
 }
 
 .btn {
   cursor: pointer;
-  border: 1px solid rgba(0,0,0,0.12);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   background: #fff;
   padding: 7px 10px;
   border-radius: 10px;
@@ -118,10 +119,10 @@
   display: inline-block;
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(0,0,0,0.14);
+  border: 1px solid rgba(0, 0, 0, 0.14);
   font-weight: 800;
   font-size: 12px;
-  background: rgba(0,0,0,0.03);
+  background: rgba(0, 0, 0, 0.03);
 }
 
 /* Expand row */
@@ -130,13 +131,12 @@
   padding-bottom: 18px;
 }
 
-
 .payments-inner {
   padding: 14px;
   border-radius: 14px;
   border: 1px solid rgba(59, 130, 246, 0.25);
   background: linear-gradient(to bottom, #ffffff, #f1f5f9);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .payments-empty {
@@ -154,14 +154,14 @@
   text-align: left;
   font-size: 12px;
   padding: 10px;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   opacity: 0.85;
   white-space: nowrap;
 }
 
 .payments-mini-table tbody td {
   padding: 10px;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .payments-mini-table tbody tr.matched-row {
@@ -175,7 +175,6 @@
 .payments-mini-table tbody tr.ambiguous-row {
   background: rgba(245, 158, 11, 0.08);
 }
-
 
 .message-cell {
   max-width: 360px;
@@ -191,7 +190,7 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 800;
-  border: 1px solid rgba(0,0,0,0.12);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   white-space: nowrap;
 }
 
@@ -201,8 +200,8 @@
 }
 
 .status-badge.unmatched {
-  background: rgba(239, 68, 68, 0.10);
-  border-color: rgba(239, 68, 68, 0.30);
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
 }
 
 .status-badge.ambiguous {
@@ -216,17 +215,16 @@
   }
 
   .btn-small {
-  margin-left: 8px;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(59,130,246,0.4);
-  background: rgba(59,130,246,0.08);
-  cursor: pointer;
-}
+    margin-left: 8px;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    background: rgba(59, 130, 246, 0.08);
+    cursor: pointer;
+  }
 
-.btn-small:hover {
-  background: rgba(59,130,246,0.16);
-}
-
+  .btn-small:hover {
+    background: rgba(59, 130, 246, 0.16);
+  }
 }
