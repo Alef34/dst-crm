@@ -72,7 +72,7 @@ export const UserProfile = () => {
 
         const studentDoc = studentSnap.docs[0];
         const student = studentDoc.data() as StudentData;
-        console.log("Našel jsem studenta:", student); // pro debug, můžeš odstranit
+        console.log("Našiel som študenta:", student); // pro debug, můžeš odstranit
         setStudentData(student);
         setEditedData(student);
         setStudentDocId(studentDoc.id);
@@ -442,55 +442,55 @@ export const UserProfile = () => {
           {isEditing ? (
             <form className="profile-form">
               <div className="form-group">
-                <label htmlFor="Name">Meno</label>
+                <label htmlFor="name">Meno</label>
                 <input
-                  id="Name"
+                  id="name"
                   type="text"
-                  name="Name"
+                  name="name"
                   value={editedData?.name || ""}
                   onChange={handleInputChange}
                   placeholder="Vaše meno"
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="Surname">Priezvisko</label>
+                <label htmlFor="surname">Priezvisko</label>
                 <input
-                  id="Surname"
+                  id="surname"
                   type="text"
-                  name="Surname"
+                  name="surname"
                   value={editedData?.surname || ""}
                   onChange={handleInputChange}
                   placeholder="Vaše priezvisko"
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="Region">Región</label>
+                <label htmlFor="region">Región</label>
                 <input
-                  id="Region"
+                  id="region"
                   type="text"
-                  name="Region"
+                  name="region"
                   value={editedData?.region || ""}
                   onChange={handleInputChange}
                   placeholder="Váš región"
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="School">Škola</label>
+                <label htmlFor="school">Škola</label>
                 <input
-                  id="School"
+                  id="school"
                   type="text"
-                  name="School"
+                  name="school"
                   value={editedData?.school || ""}
                   onChange={handleInputChange}
                   placeholder="Vaša škola"
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="Mail">Email</label>
+                <label htmlFor="mail">Email</label>
                 <input
-                  id="Mail"
+                  id="mail"
                   type="email"
-                  name="Mail"
+                  name="mail"
                   value={editedData?.mail || ""}
                   onChange={handleInputChange}
                   placeholder="Váš email"
@@ -498,22 +498,22 @@ export const UserProfile = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="TelephoneNumber">Telefónne číslo</label>
+                <label htmlFor="telephoneNumber">Telefónne číslo</label>
                 <input
-                  id="TelephoneNumber"
+                  id="telephoneNumber"
                   type="tel"
-                  name="TelephoneNumber"
+                  name="telephoneNumber"
                   value={editedData?.telephoneNumber || ""}
                   onChange={handleInputChange}
                   placeholder="Vaše telefónne číslo"
                 />
               </div>
               <div className="form-group form-group-full">
-                <label htmlFor="Note">Poznámka</label>
+                <label htmlFor="note">Poznámka</label>
                 <textarea
-                  id="Note"
-                  name="Note"
-                  value={editedData?.Note || ""}
+                  id="note"
+                  name="note"
+                  value={editedData?.note || ""}
                   onChange={handleTextAreaChange}
                   placeholder="Poznámka"
                   rows={4}

@@ -24,14 +24,19 @@ export const Login = () => {
       }
 
       console.log('Kontrolujem email:', userEmail.toLowerCase());
-      const allowedEmailsRef = collection(db, 'allowedEmails');
+      const allowedEmailsRef = collection(db, 'students');
+
       
       // Stiahni VŠETKY emaily aby sme videli čo je tam
       const allEmails = await getDocs(allowedEmailsRef);
       console.log('Všetky emaily v DB:', allEmails.docs.map(doc => doc.data().email));
       
+
+
+
+
       // Teraz kontroluj konkrétny email
-      const q = query(allowedEmailsRef, where('email', '==', userEmail.toLowerCase()));
+      const q = query(allowedEmailsRef, where('mail', '==', userEmail.toLowerCase()));
       const querySnapshot = await getDocs(q);
       console.log('Query výsledok:', querySnapshot.empty ? 'PRÁZDNY' : 'NÁJDENÝ');
       console.log('Počet zhodných emailov:', querySnapshot.size);
@@ -92,6 +97,8 @@ export const Login = () => {
         setLoading(false);
         return;
       }
+      console.log('Pokus o přihlášení s emailem:', email);
+      console.log('Pokus o přihlášení s heslem:', password ? '****' : '(prázdné)');
 
       const result = await signInWithEmailAndPassword(auth, email, password);
       const user = result.user;

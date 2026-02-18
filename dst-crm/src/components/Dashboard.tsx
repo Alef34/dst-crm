@@ -11,11 +11,12 @@ import '../styles/Dashboard.css';
 import { UserProfile } from './UserProfile';
 import PaymentsManagement from './PaymentsManagement';
 import StudentsManagement from './StudentsManagement';
+import Communication from './Communacation';
 
 
 
 export const Dashboard = () => {
-  const [adminTab, setAdminTab] = useState<'import' | 'students'| 'emails' | 'payments' | 'pending' | 'users'>('import');
+  const [adminTab, setAdminTab] = useState<'import' | 'communication' | 'students'| 'emails' | 'payments' | 'pending' | 'users'>('import');
   const { user, role, isAdmin } = useAuth();
   const navigate = useNavigate();
 
@@ -95,6 +96,13 @@ export const Dashboard = () => {
               </button>
 
               <button
+                className={`tab-btn ${adminTab === 'communication' ? 'active' : ''}`}
+                onClick={() => setAdminTab('communication')}
+              >
+                Komunikácia
+              </button>
+
+              <button
                 className={`tab-btn ${adminTab === 'students' ? 'active' : ''}`}
                 onClick={() => setAdminTab('students')}
               >
@@ -107,6 +115,7 @@ export const Dashboard = () => {
             {adminTab === 'users' && <UsersManagement />}
             {adminTab === 'payments' && <PaymentsManagement />}
             {adminTab === 'students' && <StudentsManagement />}
+            {adminTab === 'communication' && <Communication />}
           </div>
         ) : (
           <UserProfile />
