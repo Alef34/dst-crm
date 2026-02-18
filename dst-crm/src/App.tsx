@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { Login } from './components/Login'
-import { AccessRequest } from './components/AccessRequest'
+//import { AccessRequest } from './components/AccessRequest'
 import { Dashboard } from './components/Dashboard'
 import { Unauthorized } from './components/Unauthorized'
 
@@ -15,7 +15,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/access-request" element={<AccessRequest />} />
+          {/*<Route path="/access-request" element={<AccessRequest />} />*/}
           <Route path="/unauthorized" element={<Unauthorized />} />
           
         
