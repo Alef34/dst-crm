@@ -183,118 +183,118 @@ console.log("1");
 
   return (
     <div className="import-students-container">
+     
       <div className="import-header">
         <h2>Import</h2>
         <p>Nahrajte JSON súbor </p>
       </div>
-       <div style={{display: "flex"}}>
-      <div style={{flex: 1,backgroundColor: "#f0f0f0"}}>
-        
-        Študenti
+      
+
+      <div className="import-grid">
+
         <div className="import-card">
+
           <div className="file-input-wrapper">
             <label htmlFor="file-input" className="file-input-label">
-              JSON súbor študentov:
+                JSON súbor študentov:
             </label>
+        
             <input
               id="file-input"
               type="file"
               accept=".json"
               onChange={handleFileChange}
               className="file-input"
-            />
+              />
+            
             <span className="file-name">{file?.name || 'Žiadny súbor nie je vybraný'}</span>
-          </div>
-
-          <div className="format-info">
-            <h3>Formát JSON súboru:</h3>
-            <pre>{`[
-                    {
-  "name": "Meno",
-  "surname": "Priezvisko",
-  "region": "Región",
-  "school": "Škola",
-  "mail": "email@example.com",
-  "telephoneNumber": "+421950123456",
-  "typeOfPayment": "Bankový prevod",
-  "period": "2025-2026",
-  "amount": "500",
-  "iban": "SK1234567890",
-  "vs": "123456",
-  "note": "Poznámka"
-                    }
-                  ]`}</pre>
-          </div>
-
-          <button
-            className="import-btn"
-            onClick={handleImport}
-            disabled={!file || importing}
-          >
-            {importing ? 'Importujem...' : 'Importovať'}
-          </button>
-
-          {message && (
-            <div className={`message message-${messageType}`}>
-              {message}
+            
             </div>
-          )}
-        </div>
 
-
-      </div>
-      <div style={{flex: 1,backgroundColor: "#e0e0e0"}}>
-        Platby
-
-        <div className="import-card">
-          <div className="file-input-wrapper">
-            <label htmlFor="file-input-payments" className="file-input-label">
-              JSON súbor platieb:
-            </label>
-            <input
-              id="file-input-payments"
-              type="file"
-              accept=".json"
-              onChange={handleFilePaymentsChange}
-              className="file-input"
-            />
-            <span className="file-name">{filePayments?.name || 'Žiadny súbor nie je vybraný'}</span>
-          </div>
-
-          <div className="format-info">
-            <h3>Formát JSON súboru:</h3>
-            <pre>{`[
-                    {
-    "date": "Dátum platby",
-    "amount": "suma",
-    "senderIban": "číslo účtu",
-    "message": "popis platby",
-    "senderName": "meno odosielateľa",
-    "vs": "variabilný symbol"
-  },
-
-                  ]`}</pre>
-          </div>
-
-          <button
-            className="import-btn"
-            onClick={handleImportPayments}
-            disabled={!filePayments || importingPayments}
-          >
-            {importingPayments ? 'Importujem...' : 'Importovať'}
-          </button>
-
-          {messagePayments && (
-            <div className={`message message-${messageTypePayments}`}>
-              {messagePayments}
+            <div className="format-info">
+              <h3>Formát JSON súboru:</h3>
+              <pre>{`[
+                      {
+    "name": "Meno",
+    "surname": "Priezvisko",
+    "region": "Región",
+    "school": "Škola",
+    "mail": "email@example.com",
+    "telephoneNumber": "+421950123456",
+    "typeOfPayment": "Classis",
+    "period": "Year",
+    "amount": "360",
+    "iban": "SK1234567890",
+    "vs": "123456",
+    "note": "Poznámka"
+                      }
+                    ]`}</pre>
             </div>
-          )}
-        </div>
 
+            <button
+              className="import-btn"
+              onClick={handleImport}
+              disabled={!file || importing}
+            >
+              {importing ? 'Importujem...' : 'Importovať'}
+            </button>
 
-      </div>
+            {message && (
+              <div className={`message message-${messageType}`}>
+                {message}
+              </div>
+            )}
+          </div>
+
+        
+
+          <div className="import-card">
+            <div className="file-input-wrapper">
+              <label htmlFor="file-input-payments" className="file-input-label">
+                JSON súbor platieb:
+              </label>
+              <input
+                id="file-input-payments"
+                type="file"
+                accept=".json"
+                onChange={handleFilePaymentsChange}
+                className="file-input"
+              />
+              <span className="file-name">{filePayments?.name || 'Žiadny súbor nie je vybraný'}</span>
+            </div>
+
+            <div className="format-info">
+              <h3>Formát JSON súboru:</h3>
+              <pre>{`[
+                      {
+      "date": "Dátum platby",
+      "amount": "suma",
+      "senderIban": "číslo účtu",
+      "message": "popis platby",
+      "senderName": "meno odosielateľa",
+      "vs": "variabilný symbol"
+      },
+
+                    ]`}</pre>
+            </div>
+
+            <button
+              className="import-btn"
+              onClick={handleImportPayments}
+              disabled={!filePayments || importingPayments}
+            >
+              {importingPayments ? 'Importujem...' : 'Importovať'}
+            </button>
+
+            {messagePayments && (
+              <div className={`message message-${messageTypePayments}`}>
+                {messagePayments}
+              </div>
+            )}
+          </div>
       </div>
     </div>
+
     
   );
 };

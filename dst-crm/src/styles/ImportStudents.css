@@ -1,8 +1,18 @@
-.import-students-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+.import-students-container{
+  width: 100%;
+  margin: 0;
+  padding: 0;
+   padding-bottom: 120px; 
 }
+
+
+.import-grid  {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+  align-items: stretch;
+}
+
 
 .import-header {
   display: flex;
@@ -19,13 +29,19 @@
   font-size: 13px;
   margin: 0;
   font-weight: 500;
+  
 }
 
 .import-card {
-  background: white;
+  background: whitesmoke;
   border-radius: 8px;
   padding: 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
 }
 
 .file-input-wrapper {
@@ -35,18 +51,21 @@
 
 .file-input-label {
   display: inline-block;
-  padding: 12px 24px;
-  background-color: #3498db;
-  color: white;
+  padding: 10px 20px;
+  background-color: #ffa5eb;
+  color: #4b4a4a;
+  font-size: 15px;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 750;
   transition: background-color 0.3s ease;
   margin-bottom: 10px;
+  border: none;
+  letter-spacing: 0.07em;
 }
 
 .file-input-label:hover {
-  background-color: #2980b9;
+  background-color: #ffa5eb;
 }
 
 .file-input {
@@ -55,21 +74,27 @@
 
 .file-name {
   display: block;
-  color: #666;
-  font-size: 14px;
+  color: #4b4a4a;
+  font-size: 13px;
   margin-top: 10px;
+  font-weight: 600;
+
 }
 
 .format-info {
-  background-color: #f8f9fa;
-  border-left: 4px solid #3498db;
+  background-color: #eaebec;
+  border-left: 4px solid #ffa5eb;
   padding: 20px;
   margin-bottom: 25px;
   border-radius: 4px;
+
+   flex: 1;
+  min-height: 0;
+
 }
 
 .format-info h3 {
-  color: #333;
+  color: #4b4a4a;
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -86,7 +111,8 @@
   font-size: 12px;
   line-height: 1.4;
   margin: 0;
-  color: #333;
+  color: #4b4a4a;
+  
 }
 
 .import-btn {
@@ -101,6 +127,8 @@
   font-weight: 600;
   font-size: 16px;
   transition: background-color 0.3s ease;
+
+   margin-top: auto;
 }
 
 .import-btn:hover:not(:disabled) {
