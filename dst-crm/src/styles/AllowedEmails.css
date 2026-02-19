@@ -1,8 +1,9 @@
 .allowed-emails-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
+  width: 100%;
+  margin: 0;
+  padding: 0;
+   padding-bottom: 120px; 
+  }
 
 .allowed-emails-header {
   display: flex;
@@ -23,7 +24,7 @@
 
 
 .allowed-emails-card {
-  background: white;
+  background: whitesmoke;
   border-radius: 8px;
   padding: 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -46,21 +47,24 @@
 
 .email-input:focus {
   outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  border-color: #8a8a8a;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
 }
 
 .add-btn {
-  padding: 12px 24px;
+  padding: 11px 22px;
   background-color: #27ae60;
   color: white;
+  font-size: 15px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 750;
   transition: background-color 0.3s ease;
-  white-space: nowrap;
+    letter-spacing: 0.07em;
+  white-space: nowrap; /*text does nto break,..*/
 }
+
 
 .add-btn:hover {
   background-color: #229954;
@@ -80,13 +84,13 @@
 
 .message-success {
   background-color: #d4edda;
-  color: #155724;
+  color: #02c42f;
   border: 1px solid #c3e6cb;
 }
 
 .message-error {
   background-color: #f8d7da;
-  color: #721c24;
+  color: #cd0217;
   border: 1px solid #f5c6cb;
 }
 
@@ -107,22 +111,23 @@
 }
 
 .emails-table thead {
-  background-color: #f8f9fa;
+  background-color: #eaebec;
 }
 
 .emails-table th {
   padding: 15px;
   text-align: left;
-  font-weight: 600;
-  color: #333;
-  border-bottom: 2px solid #ecf0f1;
+  font-weight: 700;
+  color: #4b4a4a;
+  border-bottom: 2px solid #bfbfc0;
 }
 
 .emails-table td {
   padding: 15px;
-  border-bottom: 1px solid #ecf0f1;
-  color: #666;
+  border-bottom: 1px solid #d3d5d5;
+  color: #4b4a4a;
   font-size: 14px;
+  font-weight: 600;
 }
 
 .emails-table tbody tr:hover {
@@ -130,16 +135,19 @@
 }
 
 .delete-btn {
-  padding: 6px 12px;
-  background-color: #e74c3c;
+  padding: 7px 13px;
+  background-color: #fd5300;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   transition: background-color 0.3s ease;
+  letter-spacing: 0.07em;
+
 }
+
 
 .delete-btn:hover {
   background-color: #c0392b;
