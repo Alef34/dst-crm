@@ -1,6 +1,8 @@
 .dashboard-container {
   min-height: 100vh;
   background-color: #5c5c5c;
+   overflow-x: hidden;
+  ;
 }
 
 .dashboard-header {
@@ -126,9 +128,11 @@
 
 .admin-tabs {
   display: flex;
-  gap: 0;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 30px;
   border-bottom: 2px solid whitesmoke;
+  padding-bottom: 8px;
 }
 
 .tab-btn {
