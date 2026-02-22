@@ -34,6 +34,8 @@ interface PaymentInfo {
   message?: string;
   senderIban: string;
   senderName?: string;
+  matchStatus?: "matched" | "unmatched" | "ambiguous";
+  matchedStudentId?: string | null;
 }
 
 // Funkcia tvoriaca komponent UserProfile --> uzivatelsky profil
@@ -88,38 +90,74 @@ export const UserProfile = () => {
         setEditedData(student);
         setStudentDocId(studentDoc.id);
 
-        // 2) ak má VS, dotiahni platby
-
+        // 2) dotiahni platby priradené ku tomuto študentovi (podľa VS)
+        const studentId = studentDoc.id;
         const vs = String(student.vs ?? "").trim();
 
-        console.log("Hledám platby pro VS:", vs);
+        console.log("=== DEBUG PAYMENTS ===");
+        console.log("Student ID:", studentId);
+        console.log("Student email:", user.email);
+        console.log("Student VS:", vs);
 
         if (!vs) {
+          console.log("Študent nemá VS, nebudú žiadne platby");
           setPayments([]);
           setLoading(false);
           return;
         }
 
-        const paymentsQ = query(
-          collection(db, "payments"),
-          where("vs", "==", vs),
-          orderBy("date", "desc") // vyžaduje index, ak bude treba Firestore ti ho ponúkne vytvoriť
-        );
+        try {
+          // Najprv skúsme nájsť všetky platby s týmto VS (bez filtrovania na matchStatus)
+          const paymentsQ = query(
+            collection(db, "payments"),
+            where("vs", "==", vs),
+            orderBy("date", "desc")
+          );
 
-        const paymentsSnap = await getDocs(paymentsQ);
-        const paymentsData = paymentsSnap.docs.map((d) => {
-          const p = d.data() as any;
-          return {
-            vs: p.vs,
-            amount: p.amount ?? 0,
-            date: toDateSafe(p.date),
-            message: p.message ?? "",
-            senderIban: p.senderIban ?? "",
-            senderName: p.senderName ?? "",
-          } as PaymentInfo;
-        });
+          const paymentsSnap = await getDocs(paymentsQ);
+          console.log("Počet VŠETKÝCH platieb s týmto VS:", paymentsSnap.size);
+          
+          const paymentsData = paymentsSnap.docs.map((d) => {
+            const p = d.data() as any;
+            console.log("Platba:", {
+              id: d.id,
+              vs: p.vs,
+              amount: p.amount,
+              matchedStudentId: p.matchedStudentId,
+              matchStatus: p.matchStatus
+            });
+            return {
+              vs: p.vs,
+              amount: p.amount ?? 0,
+              date: toDateSafe(p.date),
+              message: p.message ?? "",
+              senderIban: p.senderIban ?? "",
+              senderName: p.senderName ?? "",
+              matchStatus: p.matchStatus ?? "unmatched",
+              matchedStudentId: p.matchedStudentId ?? null,
+            } as PaymentInfo;
+          });
 
-        setPayments(paymentsData);
+          // Filtrujeme len "matched" platby (alebo platby kde matchStatus chýba - pre spätnosť)
+          const matchedPayments = paymentsData.filter(
+            p => p.matchStatus === "matched" || !p.matchStatus
+          );
+          
+          console.log("Počet matched platieb:", matchedPayments.length);
+          console.log("Payments data na zobrazenie:", matchedPayments);
+          setPayments(matchedPayments);
+        } catch (queryError: any) {
+          console.error("CHYBA PRI QUERY PLATIEB:", queryError);
+          console.error("Error code:", queryError?.code);
+          console.error("Error message:", queryError?.message);
+          
+          // Ak je problém s indexom, Firestore vráti failed-precondition
+          if (queryError?.code === 'failed-precondition') {
+            console.error("❌ FIRESTORE INDEX CHÝBA! Vytvor index na adrese, ktorá sa zobrazí v chybe vyššie.");
+          }
+          
+          setPayments([]);
+        }
         setLoading(false);
       } catch (error) {
         console.error("Chyba pri načítaní profilu/platieb:", error);
@@ -645,7 +683,7 @@ export const UserProfile = () => {
 
           {payments.length === 0 ? (
             <div className="profile-field">
-              <span className="field-value">No payments found for VS: {studentData?.vs || "-"}</span>
+              <span className="field-value">Žiadne priradené platby</span>
             </div>
           ) : (
             <div className="payments-table-wrap">

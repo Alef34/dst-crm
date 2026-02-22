@@ -39,21 +39,22 @@
 .email-input {
   flex: 1;
   padding: 12px 15px;
-  border: 1px solid #ddd;
+  border: 1px solid #cececf;
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.3s ease;
-  background-color: red;
-  color: white;
+  background-color: #f4f3f3;
+  color: #4b4a4a;
+  font-weight: 700;
 }
 
 .email-input::placeholder {
-  color: black;
+  color: #4b4a4a;
 }
 
 .email-input:focus {
   outline: none;
-  border-color: #8a8a8a;
+  border-color: #c4c4c4;
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
 }
 

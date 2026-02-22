@@ -15,7 +15,7 @@
 
 /* all "cards" */
 .profile-card,
-.profile-photo-card, .profile-card-secondary, .profile-card-tetriary {
+.profile-photo-card, .profile-card-secondary, .profile-card-tetriary, .profile-card-payments {
   background: #ffffff;
   border-radius: 12px;
   padding: 28px;
