@@ -156,10 +156,17 @@ export const PaymentsManagement: React.FC = () => {
   const assignToStudent = async (paymentId: string, studentId: string) => {
     setAssigning(true);
     try {
+      console.log("=== PRIRADENIE PLATBY ===");
+      console.log("Payment ID:", paymentId);
+      console.log("Student ID:", studentId);
+      
       await updateDoc(doc(db, "payments", paymentId), {
         matchedStudentId: studentId,
         matchStatus: "matched",
       });
+      
+      console.log("Platba úspešne priradená!");
+      
       setMessage("Platba priradená ku študentovi.");
       setMessageType("success");
       setSelectedPaymentId(null);
