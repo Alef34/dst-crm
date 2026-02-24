@@ -347,70 +347,7 @@ export const PaymentsManagement: React.FC = () => {
               </table>
             </div>
 
-            {/* Panel priradenia (jednoduché) */}
-            {selectedPaymentId && (
-              <div className="assign-panel">
-                <h3>Priradiť platbu</h3>
-                <div className="assign-row">
-                  <label>Hľadaj študenta podľa VS:</label>
-                  <input
-                    value={searchVS}
-                    onChange={(e) => {
-                      setSearchVS(e.target.value);
-                    }}
-                    onBlur={() => searchStudentsByVS(searchVS)}
-                  />
-                  <button onClick={() => searchStudentsByVS(searchVS)}>
-                    Hľadať
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedPaymentId(null);
-                      setStudentResults([]);
-                      setSearchVS("");
-                    }}
-                  >
-                    Zrušiť
-                  </button>
-                </div>
-
-                <div className="search-results">
-                  {studentResults.length === 0 ? (
-                    <p>Žiadni študenti pre VS: {searchVS || "-"} </p>
-                  ) : (
-                    <table className="search-table">
-                      <thead>
-                        <tr>
-                          <th>Študent</th>
-                          <th>VS</th>
-                          <th>Škola</th>
-                          <th>Akcia</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {studentResults.map((s) => (
-                          <tr key={s.id}>
-                            <td>{(s.name || "") + " " + (s.surname || "")}</td>
-                            <td>{s.vs}</td>
-                            <td>{s.school || "-"}</td>
-                            <td>
-                              <button
-                                onClick={() =>
-                                  assignToStudent(selectedPaymentId, s.id)
-                                }
-                                disabled={assigning}
-                              >
-                                Priradiť k tomuto študentovi
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
-                </div>
-              </div>
-            )}
+           
           </>
         )}
       </div>
