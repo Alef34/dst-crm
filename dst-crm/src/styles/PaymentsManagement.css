@@ -1,58 +1,66 @@
 /* PaymentsManagement.css */
 
 .payments-management-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 120px;
 }
 
 .payments-management-header {
-  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 15px;
 }
 
 .payments-management-header h2 {
-  margin: 0 0 6px 0;
-  font-size: 24px;
+  margin: 0 0 10px 0;
+  font-size: 28px;
   font-weight: 700;
+  color: whitesmoke;
 }
 
 .payments-management-header p {
+  color: whitesmoke;
+  font-size: 13px;
   margin: 0;
-  opacity: 0.8;
-  line-height: 1.4;
+  font-weight: 500;
 }
 
-/* Message (success/error) - kompatibilné s tvojím message classom */
 .message {
-  padding: 12px 14px;
-  border-radius: 10px;
-  margin: 14px 0;
+  padding: 15px 20px;
+  border-radius: 6px;
   font-weight: 600;
+  text-align: center;
+  margin-bottom: 25px;
 }
 
 .message-success {
-  background: rgba(34, 197, 94, 0.12);
-  border: 1px solid rgba(34, 197, 94, 0.35);
+  background-color: #d4edda;
+  color: #02c42f;
+  border: 1px solid #c3e6cb;
 }
 
 .message-error {
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.35);
-}
-
-/* Card */
-.payments-card {
-  background: gray;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 14px;
-  padding: 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  background-color: #f8d7da;
+  color: #cd0217;
+  border: 1px solid #f5c6cb;
 }
 
 .empty-message {
-  margin: 0;
-  padding: 12px 4px;
-  opacity: 0.8;
+  text-align: center;
+  color: #999;
+  padding: 40px 20px;
+  font-size: 14px;
+}
+
+.payments-card {
+  background: whitesmoke;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 /* Table wrapper */
@@ -64,27 +72,29 @@
 .payments-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 980px;
 }
 
-.payments-table thead th {
+.payments-table thead {
+  background-color: #eaebec;
+}
+
+.payments-table th {
+  padding: 15px;
   text-align: left;
+  font-weight: 700;
+  color: #4b4a4a;
+  border-bottom: 2px solid #d3d5d5;
   font-size: 13px;
-  letter-spacing: 0.02em;
-  padding: 12px 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  opacity: 0.85;
-  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.payments-table tbody td {
-  padding: 12px 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  vertical-align: top;
-}
-
-.payments-table tbody tr:hover {
-  background: rgba(0, 0, 0, 0.02);
+.payments-table td {
+  padding: 15px;
+  border-bottom: 1px solid #d3d5d5;
+  color: #4b4a4a;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 /* Cells */
@@ -95,25 +105,23 @@
   text-overflow: ellipsis;
 }
 
-.email-cell {
-  white-space: nowrap;
-}
-
 /* Buttons in table */
 .payments-table button {
   cursor: pointer;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  background: #fff;
-  padding: 7px 10px;
-  border-radius: 10px;
+  border: 1px solid #d3d5d5;
+  background: #ffffff;
+  padding: 8px 14px;
+  border-radius: 6px;
   font-weight: 600;
   font-size: 13px;
   margin-right: 8px;
-  transition: transform 0.04s ease, background 0.15s ease, border 0.15s ease;
+  transition: all 0.2s ease;
+  color: #4b4a4a;
 }
 
 .payments-table button:hover {
-  background: rgba(0, 0, 0, 0.03);
+  background: #f5f5f5;
+  border-color: #999;
 }
 
 .payments-table button:active {
@@ -127,127 +135,229 @@
 
 /* Danger button */
 .payments-table button.danger {
-  border-color: rgba(239, 68, 68, 0.45);
-  background: rgba(239, 68, 68, 0.08);
+  border-color: #cd0217;
+  color: #cd0217;
 }
 
 .payments-table button.danger:hover {
-  background: rgba(239, 68, 68, 0.14);
+  background: #f8d7da;
 }
 
 /* Status badges */
 .status-badge {
   display: inline-block;
-  padding: 5px 10px;
-  border-radius: 999px;
+  padding: 6px 12px;
+  border-radius: 6px;
   font-size: 12px;
-  font-weight: 700;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  white-space: nowrap;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
-/* matched / unmatched / ambiguous */
 .status-badge.matched {
-  background: rgba(34, 197, 94, 0.12);
-  border-color: rgba(34, 197, 94, 0.35);
+  background-color: #d4edda;
+  color: #02c42f;
+  border: 1px solid #c3e6cb;
 }
 
 .status-badge.unmatched {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.3);
+  background-color: #f8d7da;
+  color: #cd0217;
+  border: 1px solid #f5c6cb;
 }
 
 .status-badge.ambiguous {
-  background: rgba(245, 158, 11, 0.14);
-  border-color: rgba(245, 158, 11, 0.35);
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
 }
 
-/* Assign panel */
+/* Assign Payment Row - expanded row in table */
+.assign-payment-row td {
+  padding: 0 !important;
+  border-bottom: none !important;
+  background-color: #fafafa;
+}
+
+.assign-payment-row:hover {
+  background-color: #fafafa !important;
+}
+
 .assign-panel {
-  margin-top: 16px;
-  padding: 14px;
-  border-radius: 14px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: rgba(0, 0, 0, 0.02);
+  padding: 20px;
+  border-radius: 0;
+  background: transparent;
+  border: none;
 }
 
 .assign-panel h3 {
-  margin: 0 0 12px 0;
+  margin: 0 0 15px 0;
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 700;
+  color: #4b4a4a;
 }
 
 .assign-row {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
 }
 
 .assign-row label {
   font-weight: 700;
-  opacity: 0.9;
+  color: #4b4a4a;
+  font-size: 14px;
 }
 
 .assign-row input {
   min-width: 220px;
-  padding: 9px 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.14);
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #d3d5d5;
   outline: none;
   background: #fff;
+  font-size: 14px;
+  color: #4b4a4a;
 }
 
 .assign-row input:focus {
-  border-color: rgba(0, 0, 0, 0.28);
+  border-color: #999;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+.assign-row button {
+  cursor: pointer;
+  border: 1px solid #d3d5d5;
+  background: #ffffff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #4b4a4a;
+  transition: all 0.2s ease;
+}
+
+.assign-row button:hover {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+.assign-row button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Search results table (inside assign panel) */
 .search-results {
   overflow-x: auto;
+  margin-top: 15px;
 }
 
 .search-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 720px;
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
 }
 
-.search-table thead th {
+.search-table thead {
+  background-color: #eaebec;
+}
+
+.search-table th {
+  padding: 12px 15px;
   text-align: left;
+  font-weight: 700;
+  color: #4b4a4a;
+  border-bottom: 2px solid #d3d5d5;
   font-size: 13px;
-  padding: 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  opacity: 0.85;
-  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.search-table tbody td {
-  padding: 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+.search-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #d3d5d5;
+  color: #4b4a4a;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .search-table tbody tr:hover {
-  background: rgba(0, 0, 0, 0.02);
+  background-color: #f9f9f9;
 }
 
-/* Mobile-ish tweaks */
+/* Filter bar */
+.filters-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 15px 0;
+  flex-wrap: wrap;
+}
+
+.filters-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filters-label {
+  font-weight: 700;
+  color: #4b4a4a;
+  font-size: 14px;
+}
+
+.filter-chip {
+  cursor: pointer;
+  border: 1px solid #d3d5d5;
+  background: #ffffff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #4b4a4a;
+  transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+.filter-chip.active {
+  background: #4b4a4a;
+  color: #ffffff;
+  border-color: #4b4a4a;
+}
+
+.filters-right {
+  color: #4b4a4a;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* Responzívnosť */
 @media (max-width: 768px) {
-  .payments-management-container {
-    padding: 16px;
-  }
-
   .payments-card {
-    padding: 12px;
+    padding: 20px;
   }
 
-  .message-cell {
-    max-width: 220px;
+  .payments-management-header h2 {
+    font-size: 24px;
+  }
+
+  .payments-table th,
+  .payments-table td {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .payments-table button {
+    padding: 6px 10px;
+    font-size: 12px;
   }
 
   .assign-row input {
@@ -255,53 +365,23 @@
     min-width: unset;
   }
 
-  /* Filter bar */
   .filters-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 6px 14px 6px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .payments-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .filters-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
+  .payments-table {
+    min-width: 600px;
   }
 
-  .filters-label {
-    font-weight: 800;
-    opacity: 0.85;
-  }
-
-  .filter-chip {
-    cursor: pointer;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    background: #fff;
-    padding: 7px 10px;
-    border-radius: 999px;
-    font-weight: 700;
-    font-size: 13px;
-    transition: background 0.15s ease, border 0.15s ease;
-  }
-
-  .filter-chip:hover {
-    background: rgba(0, 0, 0, 0.03);
-  }
-
-  .filter-chip.active {
-    background: rgba(0, 0, 0, 0.06);
-    border-color: rgba(0, 0, 0, 0.22);
-  }
-
-  .filters-right {
-    opacity: 0.85;
-  }
-
-  .filters-count b {
-    opacity: 1;
+  .search-table {
+    min-width: 600px;
   }
 }

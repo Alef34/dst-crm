@@ -29,11 +29,13 @@ interface StudentData {
 }
 interface PaymentInfo {
   vs: string;
-  amount: string;
-  date: Date;
+  amount: string | number;
+  date: Date | null;
   message?: string;
   senderIban: string;
   senderName?: string;
+  matchStatus?: "matched" | "unmatched" | "ambiguous";
+  matchedStudentId?: string | null;
 }
 
 // Funkcia tvoriaca komponent UserProfile --> uzivatelsky profil
@@ -49,6 +51,17 @@ export const UserProfile = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [studentDocId, setStudentDocId] = useState<string>("");
   const [payments, setPayments] = useState<PaymentInfo[]>([]);
+
+  const toDateSafe = (value: any): Date | null => {
+    if (!value) return null;
+    if (value instanceof Date) return isNaN(value.getTime()) ? null : value;
+    if (typeof value?.toDate === "function") {
+      const dateFromTs = value.toDate();
+      return dateFromTs instanceof Date && !isNaN(dateFromTs.getTime()) ? dateFromTs : null;
+    }
+    const parsed = new Date(value);
+    return isNaN(parsed.getTime()) ? null : parsed;
+  };
 
   useEffect(() => {
     const fetchStudentAndPayments = async () => {
@@ -77,39 +90,74 @@ export const UserProfile = () => {
         setEditedData(student);
         setStudentDocId(studentDoc.id);
 
-        // 2) ak má VS, dotiahni platby
-
+        // 2) dotiahni platby priradené ku tomuto študentovi (podľa VS)
+        const studentId = studentDoc.id;
         const vs = String(student.vs ?? "").trim();
 
-        console.log("Hledám platby pro VS:", vs);
+        console.log("=== DEBUG PAYMENTS ===");
+        console.log("Student ID:", studentId);
+        console.log("Student email:", user.email);
+        console.log("Student VS:", vs);
 
         if (!vs) {
+          console.log("Študent nemá VS, nebudú žiadne platby");
           setPayments([]);
           setLoading(false);
           return;
         }
 
-        const paymentsQ = query(
-          collection(db, "payments"),
-          where("vs", "==", vs),
-          orderBy("date", "desc") // vyžaduje index, ak bude treba Firestore ti ho ponúkne vytvoriť
-        );
+        try {
+          // Najprv skúsme nájsť všetky platby s týmto VS (bez filtrovania na matchStatus)
+          const paymentsQ = query(
+            collection(db, "payments"),
+            where("vs", "==", vs),
+            orderBy("date", "desc")
+          );
 
-        const paymentsSnap = await getDocs(paymentsQ);
-        const paymentsData = paymentsSnap.docs.map((d) => {
-          const p = d.data() as any;
-          return {
-            vs: p.vs,
-            amount: p.amount,
-            // ak je date Firestore Timestamp:
-            date: p.date?.toDate ? p.date.toDate() : p.date,
-            message: p.message ?? "",
-            senderIban: p.senderIban ?? "",
-            senderName: p.senderName ?? "",
-          } as PaymentInfo;
-        });
+          const paymentsSnap = await getDocs(paymentsQ);
+          console.log("Počet VŠETKÝCH platieb s týmto VS:", paymentsSnap.size);
+          
+          const paymentsData = paymentsSnap.docs.map((d) => {
+            const p = d.data() as any;
+            console.log("Platba:", {
+              id: d.id,
+              vs: p.vs,
+              amount: p.amount,
+              matchedStudentId: p.matchedStudentId,
+              matchStatus: p.matchStatus
+            });
+            return {
+              vs: p.vs,
+              amount: p.amount ?? 0,
+              date: toDateSafe(p.date),
+              message: p.message ?? "",
+              senderIban: p.senderIban ?? "",
+              senderName: p.senderName ?? "",
+              matchStatus: p.matchStatus ?? "unmatched",
+              matchedStudentId: p.matchedStudentId ?? null,
+            } as PaymentInfo;
+          });
 
-        setPayments(paymentsData);
+          // Filtrujeme len "matched" platby (alebo platby kde matchStatus chýba - pre spätnosť)
+          const matchedPayments = paymentsData.filter(
+            p => p.matchStatus === "matched" || !p.matchStatus
+          );
+          
+          console.log("Počet matched platieb:", matchedPayments.length);
+          console.log("Payments data na zobrazenie:", matchedPayments);
+          setPayments(matchedPayments);
+        } catch (queryError: any) {
+          console.error("CHYBA PRI QUERY PLATIEB:", queryError);
+          console.error("Error code:", queryError?.code);
+          console.error("Error message:", queryError?.message);
+          
+          // Ak je problém s indexom, Firestore vráti failed-precondition
+          if (queryError?.code === 'failed-precondition') {
+            console.error("❌ FIRESTORE INDEX CHÝBA! Vytvor index na adrese, ktorá sa zobrazí v chybe vyššie.");
+          }
+          
+          setPayments([]);
+        }
         setLoading(false);
       } catch (error) {
         console.error("Chyba pri načítaní profilu/platieb:", error);
@@ -164,7 +212,10 @@ export const UserProfile = () => {
     Number(String(studentData?.amount || "0").replace(",", ".")) || 0;
 
   // paid so far = on progres bar
-  const paidSoFar = 0; // <- replace later with sum of payments
+  const paidSoFar = payments.reduce((sum, payment) => {
+    const amount = Number(String(payment.amount ?? "0").replace(",", "."));
+    return sum + (Number.isNaN(amount) ? 0 : amount);
+  }, 0);
   const progressPercent =
     totalAmount > 0
       ? Math.min(100, Math.max(0, (paidSoFar / totalAmount) * 100))
@@ -404,7 +455,7 @@ export const UserProfile = () => {
           <div className="payment-progress">
             <div className="progress-title">Platby</div>
 
-            <div className="progress-info">{payments[0].amount} platených</div>
+            <div className="progress-info">{paidSoFar.toFixed(0)} € platených</div>
 
             <div className="progress-wrap">
               <div className="progress-bar">
@@ -623,6 +674,43 @@ export const UserProfile = () => {
               </span>
             </div>
           </div>
+        </section>
+
+        <section className="profile-card profile-card-payments">
+          <div className="card-head">
+            <h3 className="card-title">Platby</h3>
+          </div>
+
+          {payments.length === 0 ? (
+            <div className="profile-field">
+              <span className="field-value">Žiadne priradené platby</span>
+            </div>
+          ) : (
+            <div className="payments-table-wrap">
+              <table className="payments-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>VS</th>
+                    <th>Sender</th>
+                    <th>Message</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {payments.map((payment, index) => (
+                    <tr key={`${payment.vs}-${payment.date?.toString() || index}`}>
+                      <td>{payment.date instanceof Date ? payment.date.toLocaleDateString("sk-SK") : "-"}</td>
+                      <td>{payment.amount ?? "-"}</td>
+                      <td>{payment.vs ?? "-"}</td>
+                      <td>{payment.senderName || payment.senderIban || "-"}</td>
+                      <td>{payment.message || "-"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
       </div>
     </div>
