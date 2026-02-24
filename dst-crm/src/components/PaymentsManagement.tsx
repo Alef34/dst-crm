@@ -156,10 +156,17 @@ export const PaymentsManagement: React.FC = () => {
   const assignToStudent = async (paymentId: string, studentId: string) => {
     setAssigning(true);
     try {
+      console.log("=== PRIRADENIE PLATBY ===");
+      console.log("Payment ID:", paymentId);
+      console.log("Student ID:", studentId);
+      
       await updateDoc(doc(db, "payments", paymentId), {
         matchedStudentId: studentId,
         matchStatus: "matched",
       });
+      
+      console.log("Platba úspešne priradená!");
+      
       setMessage("Platba priradená ku študentovi.");
       setMessageType("success");
       setSelectedPaymentId(null);
@@ -285,69 +292,129 @@ export const PaymentsManagement: React.FC = () => {
                 </thead>
                 <tbody>
                   {filteredPayments.map((p) => (
-                    <tr key={p.id}>
-                      <td>{p.vs || "-"}</td>
-                      <td>
-                        {typeof p.amount === "number"
-                          ? (p.amount / 100).toFixed(2) // ak máš uložené v centoch
-                          : String(p.amount)}
-                      </td>
-                      <td>
-                        {p.date
-                          ? new Date(p.date).toLocaleString("sk-SK")
-                          : "-"}
-                      </td>
-                      <td>{p.senderName || p.senderIban || "-"}</td>
-                      <td className="message-cell">{p.message || "-"}</td>
-                      <td>
-                        <span
-                          className={`status-badge ${
-                            p.matchStatus || "unmatched"
-                          }`}
-                        >
-                          {p.matchStatus === "matched"
-                            ? "Priradené"
-                            : p.matchStatus === "ambiguous"
-                            ? "Nejednoznačné"
-                            : "Nepriradené"}
-                        </span>
-                      </td>
-                      <td>{p.matchedStudentId ?? "-"}</td>
-                      <td>
-                        <button
-                          style={{ color: "#007bff" }}
-                          onClick={() => {
-                            setSelectedPaymentId(p.id ?? null);
-                            setSearchVS(p.vs ?? "");
-                            searchStudentsByVS(p.vs ?? "");
-                          }}
-                        >
-                          Priradiť
-                        </button>
-
-                        {p.matchStatus === "matched" && p.matchedStudentId && (
-                          <button
-                            style={{ color: "#007bff" }}
-                            onClick={() => removeAssignment(p.id!)}
+                    <React.Fragment key={p.id}>
+                      <tr>
+                        <td>{p.vs || "-"}</td>
+                        <td>
+                          {typeof p.amount === "number"
+                            ? (p.amount / 100).toFixed(2) // ak máš uložené v centoch
+                            : String(p.amount)}
+                        </td>
+                        <td>
+                          {p.date
+                            ? new Date(p.date).toLocaleString("sk-SK")
+                            : "-"}
+                        </td>
+                        <td>{p.senderName || p.senderIban || "-"}</td>
+                        <td className="message-cell">{p.message || "-"}</td>
+                        <td>
+                          <span
+                            className={`status-badge ${
+                              p.matchStatus || "unmatched"
+                            }`}
                           >
-                            Vyčistiť
+                            {p.matchStatus === "matched"
+                              ? "Priradené"
+                              : p.matchStatus === "ambiguous"
+                              ? "Nejednoznačné"
+                              : "Nepriradené"}
+                          </span>
+                        </td>
+                        <td>{p.matchedStudentId ?? "-"}</td>
+                        <td>
+                          <button
+                            onClick={() => {
+                              setSelectedPaymentId(p.id ?? null);
+                              setSearchVS(p.vs ?? "");
+                              searchStudentsByVS(p.vs ?? "");
+                            }}
+                          >
+                            Priradiť
                           </button>
-                        )}
 
-                        <button
-                          onClick={() => deletePayment(p.id!)}
-                          className="danger"
-                        >
-                          Vymazať
-                        </button>
-                      </td>
-                    </tr>
+                          {p.matchStatus === "matched" && p.matchedStudentId && (
+                            <button
+                              onClick={() => removeAssignment(p.id!)}
+                            >
+                              Vyčistiť
+                            </button>
+                          )}
+
+                          <button
+                            onClick={() => deletePayment(p.id!)}
+                            className="danger"
+                          >
+                            Vymazať
+                          </button>
+                        </td>
+                      </tr>
+
+                      {/* Panel priradenia - otvoríme pod platbou */}
+                      {selectedPaymentId === p.id && (
+                        <tr className="assign-payment-row">
+                          <td colSpan={8}>
+                            <div className="assign-panel">
+                              <h3>Priradiť platbu</h3>
+                              <div className="assign-row">
+                                <label>Hľadaj študenta podľa VS:</label>
+                                <input
+                                  type="text"
+                                  placeholder="Zadaj VS..."
+                                  value={searchVS}
+                                  onChange={(e) => {
+                                    setSearchVS(e.target.value);
+                                    searchStudentsByVS(e.target.value);
+                                  }}
+                                />
+                                <button
+                                  onClick={() => setSelectedPaymentId(null)}
+                                >
+                                  Zatvoriť
+                                </button>
+                              </div>
+
+                              {studentResults.length > 0 && (
+                                <div className="search-results">
+                                  <table className="search-table">
+                                    <thead>
+                                      <tr>
+                                        <th>Meno</th>
+                                        <th>VS</th>
+                                        <th>Škola</th>
+                                        <th>Akcia</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {studentResults.map((s) => (
+                                        <tr key={s.id}>
+                                          <td>{(s.name || "") + " " + (s.surname || "")}</td>
+                                          <td>{s.vs}</td>
+                                          <td>{s.school || "-"}</td>
+                                          <td>
+                                            <button
+                                              onClick={() =>
+                                                assignToStudent(selectedPaymentId, s.id)
+                                              }
+                                              disabled={assigning}
+                                            >
+                                              Priradiť k tomuto študentovi
+                                            </button>
+                                          </td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
             </div>
-
-           
           </>
         )}
       </div>

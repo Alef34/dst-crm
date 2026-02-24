@@ -65,23 +65,25 @@
 }
 
 .users-table thead {
-  background-color: #686767;
+  background-color:  #eaebec;
 }
 
 .users-table th {
   padding: 15px;
   text-align: left;
-  font-weight: 600;
-  color: whitesoke;
+  font-weight: 700;
+  color: #4b4a4a;
   border-bottom: 2px solid #ecf0f1;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+    border-bottom: 2px solid #d3d5d5;
+
 }
 
 .users-table td {
   padding: 15px;
-  border-bottom: 1px solid #a9a9aa;
+  border-bottom: 1px solid #d3d5d5;
   color: #4b4a4a;
   font-size: 14px;
   font-weight: 600;
@@ -94,8 +96,6 @@
 }
 */
 
-/* define in teh dashboard */
-/*
 .role-badge {
   display: inline-block;
   padding: 6px 12px;
@@ -106,24 +106,41 @@
 }
 
 .role-badge.admin {
-  background-color: #ffe6e6;
-  color: #c92a2a;
+  background-color: #ffa5eb;
+  color: #4b4a4a;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
 }
 
-.role-badge.user {
-  background-color: #e6f2ff;
-  color: #1971c2;
+.role-badge.student {
+  background-color: #f3f343;
+  color: #4b4a4a;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
 }
-*/
+
+.role-badge.team {
+  background-color: #fd5300;
+  color: white;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+}
 
 .role-select {
   padding: 8px 12px;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
   background-color: white;
   transition: all 0.3s ease;
+  color: #4b4a4a;
+  font-weight: 550;
 }
 
 .role-select:hover {
@@ -133,7 +150,6 @@
 .role-select:focus {
   outline: none;
   border-color: #7f8080;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 
 }
 

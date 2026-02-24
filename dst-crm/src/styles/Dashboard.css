@@ -1,6 +1,8 @@
 .dashboard-container {
   min-height: 100vh;
   background-color: #5c5c5c;
+   overflow-x: hidden;
+  ;
 }
 
 .dashboard-header {
@@ -48,15 +50,22 @@
   letter-spacing: 0.07em;
 }
 
-.role-badge.user {
+.role-badge.student {
   background-color: #f3f343;
   color: #4b4a4a;
   padding: px 10px;
   font-size: 13px;
   font-weight: 750;
   letter-spacing: 0.07em;
+}
 
-
+.role-badge.team {
+  background-color: #fd5300;
+  color: white;
+  padding: px 10px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
 }
 
 .user-avatar {
@@ -126,9 +135,11 @@
 
 .admin-tabs {
   display: flex;
-  gap: 0;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 30px;
   border-bottom: 2px solid whitesmoke;
+  padding-bottom: 8px;
 }
 
 .tab-btn {
