@@ -4,7 +4,6 @@ import { auth } from '../config/firebase';
 import { useNavigate } from 'react-router-dom';
 import { ImportStudents } from './ImportStudents';
 import { AllowedEmails } from './AllowedEmails';
-//import { PendingRegistrations } from './PendingRegistrations';
 import { UsersManagement } from './UsersManagement';
 import { useState } from 'react';
 import '../styles/Dashboard.css';
@@ -12,12 +11,12 @@ import { UserProfile } from './UserProfile';
 import PaymentsManagement from './PaymentsManagement';
 import StudentsManagement from './StudentsManagement';
 import Communication from './Communacation';
-import { Statistics } from './Statistics';
+import { Statistics } from './Statistics';                                                              
 
 
 
 export const Dashboard = () => {
-  const [adminTab, setAdminTab] = useState<'import' | 'communication' | 'students'| 'emails' | 'payments' | 'pending' | 'users' | 'statistics'>('import');
+  const [adminTab, setAdminTab] = useState<'import' | 'communication' | 'students'| 'emails' | 'payments' | 'users' | 'statistics'>('import');
   const { user, role, isAdmin, isTeam } = useAuth();
   const navigate = useNavigate();
   const handleLogout = async () => {
@@ -97,7 +96,6 @@ export const Dashboard = () => {
                 Štatistiky
               </button>
             </div>
-            {/*{adminTab === 'pending' && <PendingRegistrations />} */}
             {adminTab === 'import' && <ImportStudents />}
             {adminTab === 'emails' && <AllowedEmails />}
             {adminTab === 'users' && <UsersManagement />}
