@@ -8,6 +8,7 @@ import {
   updateDoc,
   doc,
   deleteDoc,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import "../styles/PaymentsManagement.css"; // pridaj vlastné štýly
@@ -52,6 +53,7 @@ export const PaymentsManagement: React.FC = () => {
     null
   );
   const [assigning, setAssigning] = useState(false);
+  const [autoPairing, setAutoPairing] = useState(false);
 
   useEffect(() => {
     loadPayments();
@@ -182,6 +184,99 @@ export const PaymentsManagement: React.FC = () => {
     }
   };
 
+  const normalizeVS = (value: any) =>
+    value === undefined || value === null ? "" : String(value).trim();
+
+  const autoAssignByVS = async () => {
+    setAutoPairing(true);
+    setMessage("");
+    try {
+      const studentsSnap = await getDocs(collection(db, "students"));
+      const studentsByVS = new Map<string, string[]>();
+
+      studentsSnap.forEach((studentDoc) => {
+        const data = studentDoc.data() as any;
+        const vs = normalizeVS(data.vs);
+        if (!vs) return;
+        if (!studentsByVS.has(vs)) studentsByVS.set(vs, []);
+        studentsByVS.get(vs)!.push(studentDoc.id);
+      });
+
+      const candidates = payments.filter(
+        (payment) => (payment.matchStatus ?? "unmatched") !== "matched" || !payment.matchedStudentId
+      );
+
+      let matchedCount = 0;
+      let ambiguousCount = 0;
+      let unchangedCount = 0;
+
+      const batchUpdates: Array<{ id: string; data: { matchedStudentId: string | null; matchStatus: "matched" | "unmatched" | "ambiguous" } }> = [];
+
+      for (const payment of candidates) {
+        if (!payment.id) continue;
+        const vs = normalizeVS(payment.vs);
+        if (!vs) {
+          unchangedCount += 1;
+          continue;
+        }
+
+        const matchedStudents = studentsByVS.get(vs) ?? [];
+
+        if (matchedStudents.length === 1) {
+          const targetStudentId = matchedStudents[0];
+          if (
+            payment.matchedStudentId !== targetStudentId ||
+            (payment.matchStatus ?? "unmatched") !== "matched"
+          ) {
+            batchUpdates.push({
+              id: payment.id,
+              data: { matchedStudentId: targetStudentId, matchStatus: "matched" },
+            });
+            matchedCount += 1;
+          } else {
+            unchangedCount += 1;
+          }
+        } else if (matchedStudents.length > 1) {
+          if (
+            payment.matchedStudentId !== null ||
+            (payment.matchStatus ?? "unmatched") !== "ambiguous"
+          ) {
+            batchUpdates.push({
+              id: payment.id,
+              data: { matchedStudentId: null, matchStatus: "ambiguous" },
+            });
+            ambiguousCount += 1;
+          } else {
+            unchangedCount += 1;
+          }
+        } else {
+          unchangedCount += 1;
+        }
+      }
+
+      for (let index = 0; index < batchUpdates.length; index += 450) {
+        const chunk = batchUpdates.slice(index, index + 450);
+        const batch = writeBatch(db);
+        chunk.forEach((updateItem) => {
+          batch.update(doc(db, "payments", updateItem.id), updateItem.data);
+        });
+        await batch.commit();
+      }
+
+      setMessage(
+        `Auto-spárovanie dokončené. Spárované: ${matchedCount}, Nejednoznačné: ${ambiguousCount}, Bez zmeny: ${unchangedCount}`
+      );
+      setMessageType("success");
+      await loadPayments();
+    } catch (err) {
+      console.error("Chyba pri auto-spárovaní podľa VS:", err);
+      setMessage("Chyba pri auto-spárovaní podľa VS");
+      setMessageType("error");
+    } finally {
+      setAutoPairing(false);
+    }
+  };
+
   const filteredPayments = payments.filter((p) => {
     if (statusFilter === "all") return true;
     return (p.matchStatus ?? "unmatched") === statusFilter;
@@ -271,6 +366,13 @@ export const PaymentsManagement: React.FC = () => {
               </div>
 
               <div className="filters-right">
+                <button
+                  className="filter-chip"
+                  onClick={autoAssignByVS}
+                  disabled={autoPairing}
+                >
+                  {autoPairing ? "Párujem podľa VS..." : "Auto-spárovať podľa VS"}
+                </button>
                 <span className="filters-count">
                   Zobrazené: <b>{filteredPayments.length}</b>
                 </span>
