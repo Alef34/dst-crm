@@ -46,9 +46,9 @@ export const Communication: React.FC = () => {
   // možnosť prepísať očakávanú sumu lokálne pre študenta: map studentId -> overrideNumber
   const [overrides, setOverrides] = useState<Record<string, number>>({});
 
-  // FILTER TERAZ PODĽA VYPOČÍTANÉHO STAVU: "all" | "paid" | "partial" | "unpaid" | "overpaid"
+  // FILTER TERAZ PODĽA VYPOČÍTANÉHO STAVU: "all" | "paid" | "unpaid" | "overpaid"
   const [statusFilter, setStatusFilter] = useState<
-    "all" | "paid" | "partial" | "unpaid" | "overpaid"
+    "all" | "paid" | "unpaid" | "overpaid"
   >("all");
 
   // Email modal
@@ -124,11 +124,11 @@ export const Communication: React.FC = () => {
     }
   };
 
-  // mapovanie VS -> platby
-  const paymentsByVS = useMemo(() => {
+  // mapovanie studentId -> priradené platby
+  const paymentsByStudentId = useMemo(() => {
     const map = new Map<string, PaymentInfo[]>();
     for (const p of payments) {
-      const key = (p.vs ?? "").trim();
+      const key = (p.matchedStudentId ?? "").trim();
       if (!key) continue;
       if (!map.has(key)) map.set(key, []);
       map.get(key)!.push(p);
@@ -160,25 +160,24 @@ export const Communication: React.FC = () => {
     return base * idx;
   };
 
-  // zaplatené (sum všetkých platieb pre VS)
+  // zaplatené (sum všetkých platieb priradených tomuto študentovi)
   const paidForStudent = (s: StudentData) => {
-    const vs = (s.vs ?? "").trim();
-    if (!vs) return 0;
-    const arr = paymentsByVS.get(vs) ?? [];
+    const studentId = (s.id ?? "").trim();
+    if (!studentId) return 0;
+    const arr = paymentsByStudentId.get(studentId) ?? [];
     return arr.reduce((acc, p) => {
       const v = typeof p.amount === "number" ? p.amount : Number(p.amount ?? 0);
       return acc + (isNaN(v) ? 0 : v);
     }, 0);
   };
 
-  // status (paid/partial/unpaid/overpaid) podľa expected vs paid
+  // status (paid/unpaid/overpaid) podľa expected vs paid
   const statusForStudent = (s: StudentData) => {
     const expected = expectedForStudent(s);
     const paid = paidForStudent(s);
 
     if (expected > 0 && paid === expected) return "paid";
     if (paid > expected) return "overpaid";
-    if (paid >= 0 && paid < expected) return "partial";
     return "unpaid";
   };
 
@@ -189,7 +188,7 @@ export const Communication: React.FC = () => {
       const st = statusForStudent(s);
       return st === statusFilter;
     });
-  }, [students, statusFilter, paymentsByVS, installmentIndex, overrides]);
+  }, [students, statusFilter, paymentsByStudentId, installmentIndex, overrides]);
 
   // override handler (lokálne)
   const setOverrideForStudent = (studentId: string, value: number) => {
@@ -301,7 +300,7 @@ export const Communication: React.FC = () => {
   return (
     <div className="installments-check-container">
       <div className="header">
-        <h2>Kontrola splátok</h2>
+        <h2>Komunikácia a kontrola</h2>
         <p>Vyber číslo 1–10 (poradie / počet splátok) a skontroluj očakávané vs. zaplatené sumy</p>
       </div>
 
@@ -309,7 +308,7 @@ export const Communication: React.FC = () => {
 
       <div className="controls">
         <label>
-          Poradie / počet splátok (1–10):
+          <p>Poradie / počet splátok (1–10):</p>
           <input
             type="number"
             min={1}
@@ -320,8 +319,8 @@ export const Communication: React.FC = () => {
         </label>
 
         {/* FILTER PODĽA VYPOČÍTANÉHO STAVU */}
-        <label style={{ marginLeft: 12 }}>
-          Filter podľa stavu:
+        <label>
+          <p>Filter podľa stavu:</p>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
@@ -329,9 +328,8 @@ export const Communication: React.FC = () => {
           >
             <option value="all">Všetky</option>
             <option value="paid">Plne</option>
-            <option value="partial">Čiastočne</option>
-            <option value="unpaid">Nezaplatené</option>
-            <option value="overpaid">Nadvyše</option>
+            <option value="unpaid">Nedoplatok</option>
+            <option value="overpaid">Preplatok</option>
           </select>
         </label>
 
@@ -339,8 +337,9 @@ export const Communication: React.FC = () => {
           Obnoviť dáta
         </button>
 
-        <button 
-          style={{ marginLeft: 12, backgroundColor: "#0066cc", color: "white", padding: "6px 12px", border: "none", borderRadius: 6, cursor: "pointer" }}
+        <button
+          className="send-email-btn"
+          style={{ marginLeft: 12 }}
           onClick={() => setShowEmailModal(true)}
           disabled={filteredStudents.length === 0}
         >
@@ -400,11 +399,9 @@ export const Communication: React.FC = () => {
                     <span className={`status-badge ${status}`}>
                       {status === "paid"
                         ? "Plne"
-                        : status === "partial"
-                        ? "Čiastočne"
                         : status === "unpaid"
-                        ? "Nezaplatené"
-                        : "Nadvyše"}
+                        ? "Nedoplatok"
+                        : "Preplatok"}
                     </span>
                   </td>
                   <td>
@@ -511,12 +508,10 @@ export const Communication: React.FC = () => {
         .installments-table { width:100%; border-collapse:collapse; }
         .installments-table th, .installments-table td { padding:8px; border:1px solid #e6e6e6; text-align:left; vertical-align:middle; }
         .row-paid { background:#e8f7e8; }      
-        .row-partial { background:#fff7e0; }  
-        .row-unpaid { background:#fff5f5; }    
+        .row-unpaid { background:rgba(253, 83, 0, 0.14); }  
         .row-overpaid { background:#e8f0ff; }  
         .status-badge.paid { color: #0b7a0b; font-weight:600; }
-        .status-badge.partial { color: #a06b00; font-weight:600; }
-        .status-badge.unpaid { color: #a10000; font-weight:600; }
+        .status-badge.unpaid { color: #c53f00; font-weight:600; }
         .status-badge.overpaid { color: #0b47a6; font-weight:600; }
         .diff.positive { color: #a10000; } 
         .diff.zero { color: #1f7a1f; }

@@ -18,20 +18,8 @@ import { Statistics } from './Statistics';
 
 export const Dashboard = () => {
   const [adminTab, setAdminTab] = useState<'import' | 'communication' | 'students'| 'emails' | 'payments' | 'pending' | 'users' | 'statistics'>('import');
-  const { user, role, isAdmin, isTeam, isStudent } = useAuth();
+  const { user, role, isAdmin, isTeam } = useAuth();
   const navigate = useNavigate();
-
-  //changing email and password
-  const [showCreds, setShowCreds] = useState(false);
-  const [newEmail, setNewEmail] = useState(user?.email || '');
-  const [newPassword, setNewPassword] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [credError, setCredError] = useState('');
-  const [credMsg, setCredMsg] = useState('');
-  const [credLoading, setCredLoading] = useState(false);
-
-  
-
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -65,14 +53,7 @@ export const Dashboard = () => {
         {isAdmin ? (
           <div className="admin-section">
             <div className="admin-tabs">
-              {/*}
-              <button
-                className={`tab-btn ${adminTab === 'pending' ? 'active' : ''}`}
-                onClick={() => setAdminTab('pending')}
-              >
-                Čakajúce registrácie
-              </button>
-              */}
+              
               <button
                 className={`tab-btn ${adminTab === 'import' ? 'active' : ''}`}
                 onClick={() => setAdminTab('import')}
@@ -107,7 +88,7 @@ export const Dashboard = () => {
                 className={`tab-btn ${adminTab === 'communication' ? 'active' : ''}`}
                 onClick={() => setAdminTab('communication')}
               >
-                Komunikácia
+                Komunikácia a kontrola
               </button>
               <button
                 className={`tab-btn ${adminTab === 'statistics' ? 'active' : ''}`}

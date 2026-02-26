@@ -210,12 +210,42 @@
   margin-bottom: 0;
 }
 
-.regions-section h3 {
-  font-size: 18px;
-  margin-bottom: 0;
-  color: #4b4a4a;
-  font-weight: 700;
-  padding: 0;
+.region-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  border-top: 2px solid #ecf0f1;
+  border-bottom: 2px solid #ecf0f1;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.region-mode-btn {
+  padding: 12px 24px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: whitesmoke;
+  transition: all 0.3s ease;
+}
+
+.region-mode-btn:hover {
+  color: #ababab;
+  border-bottom-color: #ababab;
+  margin-bottom: 4px;
+  border-bottom-width: 3px;
+}
+
+.region-mode-btn.active {
+  color: #ffa5eb;
+  border-bottom-color: #ffa5eb;
+  margin-bottom: 2px;
+  border-bottom-width: 3px;
 }
 
 .regions-grid {
@@ -252,6 +282,12 @@
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
+}
+
+.region-group-divider {
+  height: 1px;
+  background: #d3d5d5;
+  margin: 4px 0;
 }
 
 .stat-label {
@@ -364,9 +400,8 @@
     font-size: 13px;
   }
 
-  .regions-section h3 {
-    padding: 0 20px;
-    margin-bottom: 15px;
+  .region-modes {
+    margin-bottom: 20px;
   }
 
   .regions-grid {
@@ -448,10 +483,8 @@
     font-size: 12px;
   }
 
-  .regions-section h3 {
-    padding: 0 15px;
-    margin-bottom: 12px;
-    font-size: 16px;
+  .region-modes {
+    margin-bottom: 15px;
   }
 
   .regions-grid {
