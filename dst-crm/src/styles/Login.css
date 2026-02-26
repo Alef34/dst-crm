@@ -26,7 +26,7 @@
   font-size: 28px;
 }
 
-/* Prihlasenie/registracia/ ziadost o pristup*/
+/* Prihlasenie/registracia */
 .mode-tabs {
   display: flex;
   gap: 0;
@@ -34,7 +34,7 @@
   border-bottom: 2px solid #dcdcdc;
 }
 
-/* Prihlasenie/registracia/ ziadost o pristup -- form*/
+/* Prihlasenie/registracia -- form */
 .mode-tab {
   flex: 1;
   padding: 12px 0;
@@ -49,7 +49,7 @@
 }
 
 
-/* Prihlasenie/registracia/ ziadost o pristup - how it look aster the click*/
+/* Prihlasenie/registracia - active stav */
 .mode-tab.active {
   color: #4b4a4a;
   border-bottom-color: #4b4a4a;

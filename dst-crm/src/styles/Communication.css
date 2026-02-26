@@ -67,6 +67,13 @@
   align-items: center;
 }
 
+.controls label p {
+  color: whitesmoke;
+  font-size: 13px;
+  margin: 0;
+  font-weight: 500;
+}
+
 .controls input[type="number"] {
   width: 80px;
   padding: 8px 12px;
@@ -102,6 +109,23 @@
 
 .controls button:active {
   transform: translateY(1px);
+}
+
+.controls .send-email-btn {
+  padding: 10px 20px;
+  background-color: #f3f343;
+  color: #4b4a4a;
+  font-size: 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 750;
+  transition: background-color 0.3s ease;
+  letter-spacing: 0.07em;
+}
+
+.controls .send-email-btn:hover {
+  background-color: #5c5c5c;
 }
 
 .controls select {
@@ -186,12 +210,8 @@
   background: rgba(34, 197, 94, 0.08);
 }
 
-.row-partial {
-  background: rgba(245, 158, 11, 0.12);
-}
-
 .row-unpaid {
-  background: rgba(239, 68, 68, 0.08);
+  background: rgba(253, 83, 0, 0.14);
 }
 
 .row-overpaid {
@@ -213,16 +233,10 @@
   border: 1px solid #c3e6cb;
 }
 
-.status-badge.partial {
-  background-color: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeaa7;
-}
-
 .status-badge.unpaid {
-  background-color: #f8d7da;
-  color: #cd0217;
-  border: 1px solid #f5c6cb;
+  background-color: #ffe3d6;
+  color: #c53f00;
+  border: 1px solid #ffbf9f;
 }
 
 .status-badge.overpaid {

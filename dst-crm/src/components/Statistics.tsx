@@ -14,6 +14,9 @@ interface StudentData {
   surname?: string;
   mail?: string;
   school?: string;
+  region?: string;
+  Region?: string;
+  typeOfPayment?: string;
   amount?: number;
   period?: string;
 }
@@ -34,11 +37,34 @@ interface FinanceStats {
 }
 
 export const Statistics: React.FC = () => {
-  const [tab, setTab] = useState<'overview' | 'finance'>('overview');
+  const [tab, setTab] = useState<'overview' | 'finance' | 'students'>('overview');
   const [students, setStudents] = useState<StudentData[]>([]);
   const [payments, setPayments] = useState<PaymentInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [regions, setRegions] = useState<string[]>([]);
+  const [regionMode, setRegionMode] = useState<string>('all');
+
+  const normalizeRegion = (rawValue: string) => {
+    const raw = (rawValue ?? '').trim();
+    if (!raw) return 'Neznámy kraj';
+
+    const upper = raw.toUpperCase();
+    const lettersOnly = upper.replace(/[^A-Z]/g, '');
+    const knownCodes = ['BA', 'TT', 'NR', 'TN', 'ZA', 'BB', 'PO', 'KE'];
+
+    for (const code of knownCodes) {
+      if (lettersOnly === code || lettersOnly.startsWith(code)) {
+        return code;
+      }
+    }
+
+    return raw;
+  };
+
+  const getStudentRegion = (student: StudentData) => {
+    const value = student.Region ?? student.region ?? '';
+    return normalizeRegion(value);
+  };
 
   useEffect(() => {
     loadStats();
@@ -57,6 +83,9 @@ export const Statistics: React.FC = () => {
           surname: data.surname ?? "",
           mail: data.mail ?? "",
           school: data.school ?? "",
+          region: data.region ?? data.Region ?? "",
+          Region: data.Region ?? data.region ?? "",
+          typeOfPayment: data.typeOfPayment ?? "",
           amount: typeof data.amount === "number" ? data.amount : Number(data.amount ?? 0),
           period: data.period ?? "",
         };
@@ -77,7 +106,7 @@ export const Statistics: React.FC = () => {
       });
 
       // Extrakt regióny (kraje) z údajov o školách
-      const uniqueRegions = [...new Set(studentsList.map(s => s.school || "Neznámy kraj"))];
+      const uniqueRegions = [...new Set(studentsList.map((s) => getStudentRegion(s)))];
       setRegions(uniqueRegions.sort());
 
       setStudents(studentsList);
@@ -97,8 +126,10 @@ export const Statistics: React.FC = () => {
 
     // Paid: suma všetkých platieb
     const paid = payments.reduce((acc, p) => {
-      if (studentIds && p.matchedStudentId && !studentIds.includes(p.matchedStudentId)) {
-        return acc;
+      if (studentIds) {
+        if (!p.matchedStudentId || !studentIds.includes(p.matchedStudentId)) {
+          return acc;
+        }
       }
       return acc + (p.amount || 0);
     }, 0);
@@ -156,6 +187,75 @@ export const Statistics: React.FC = () => {
     return { paid, expected, difference, final };
   };
 
+  const normalizePeriod = (value?: string) => {
+    const v = (value ?? '').toLowerCase().trim();
+    if (v === 'year' || v === 'yearly') return 'year';
+    if (v === 'half-year' || v === 'halfyear' || v === 'half year') return 'half-year';
+    if (v === 'month' || v === 'monthly') return 'month';
+    return 'other';
+  };
+
+  const getPeriodMultiplier = (period?: string) => {
+    const normalized = normalizePeriod(period);
+    if (normalized === 'year') return 1;
+    if (normalized === 'half-year') return 2;
+    if (normalized === 'month') return 10;
+    return 0;
+  };
+
+  const getFullAmount = (student: StudentData) => {
+    const baseAmount = typeof student.amount === 'number' ? student.amount : Number(student.amount ?? 0);
+    const multiplier = getPeriodMultiplier(student.period);
+    return baseAmount * multiplier;
+  };
+
+  const calculateStudentStats = (sourceStudents: StudentData[]) => {
+    const periodStats = sourceStudents.reduce(
+      (acc, student) => {
+        const period = normalizePeriod(student.period);
+        if (period === 'year') acc.year += 1;
+        if (period === 'half-year') acc.halfYear += 1;
+        if (period === 'month') acc.month += 1;
+        return acc;
+      },
+      { year: 0, halfYear: 0, month: 0 }
+    );
+
+    const classicStats = sourceStudents.reduce(
+      (acc, student) => {
+        const fullAmount = getFullAmount(student);
+        if (fullAmount === 400) acc.amount400 += 1;
+        if (fullAmount === 360) acc.amount360 += 1;
+        return acc;
+      },
+      { amount400: 0, amount360: 0 }
+    );
+
+    const classicTotal = classicStats.amount400 + classicStats.amount360;
+
+    const scholarshipAmountMap = sourceStudents.reduce((acc, student) => {
+      const fullAmount = getFullAmount(student);
+      if (fullAmount <= 0) return acc;
+      if (fullAmount === 400 || fullAmount === 360) return acc;
+
+      acc.set(fullAmount, (acc.get(fullAmount) ?? 0) + 1);
+      return acc;
+    }, new Map<number, number>());
+
+    const scholarshipRows = Array.from(scholarshipAmountMap.entries()).sort((a, b) => b[0] - a[0]);
+    const scholarshipTotal = scholarshipRows.reduce((sum, [, count]) => sum + count, 0);
+
+    return {
+      periodStats,
+      classicStats,
+      classicTotal,
+      scholarshipRows,
+      scholarshipTotal,
+    };
+  };
+
+  const studentsStats = calculateStudentStats(students);
+
   if (loading) {
     return <div className="statistics-container">Načítavam štatistiky...</div>;
   }
@@ -163,6 +263,9 @@ export const Statistics: React.FC = () => {
   const overallStats = calculateFinanceStats();
   const totalStudents = students.length;
   const totalPayments = payments.length;
+  const visibleRegions = regionMode === 'all'
+    ? regions
+    : regions.filter((region) => region === regionMode);
 
   return (
     <div className="statistics-container">
@@ -192,6 +295,16 @@ export const Statistics: React.FC = () => {
           onClick={() => setTab('finance')}
         >
           Finance
+        </button>
+        <button
+          className={`statistics-tab-btn ${
+            tab === 'students'
+              ? 'active'
+              : ''
+          }`}
+          onClick={() => setTab('students')}
+        >
+          Študenti
         </button>
       </div>
 
@@ -240,16 +353,16 @@ export const Statistics: React.FC = () => {
           <div className="finance-table-section">
             <div className="statistics-card-header">
               <h3>Finančný prehľad - Celkom</h3>
-              <p>Platené vs. očakávané hodnoty</p>
+              <p>Zaplatené do obdobia vs. Očakavané do obdobia hodnoty</p>
             </div>
             <div className="finance-table-wrapper">
               <table className="finance-table">
                 <thead>
                   <tr>
-                    <th>Platené (Paid)</th>
-                    <th>Očakávané (Expected)</th>
-                    <th>Rozdiel (Paid - Expected)</th>
-                    <th>Celkovo očakávané (Final)</th>
+                    <th>Zaplatené do obdobia </th>
+                    <th>Očakavané do obdobia </th>
+                    <th>Rozdiel </th>
+                    <th>Celkovo </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -268,14 +381,27 @@ export const Statistics: React.FC = () => {
 
           {/* Karty podľa krajov (regiónov) */}
           <div className="regions-section">
-            <div className="statistics-card-header">
-              <h3>Finančný prehľad podľa krajov</h3>
-              <p>Rozdelenie podľa škôl a regiónov</p>
+            <div className="region-modes">
+              <button
+                className={`region-mode-btn ${regionMode === 'all' ? 'active' : ''}`}
+                onClick={() => setRegionMode('all')}
+              >
+                Všetky regióny
+              </button>
+              {regions.map((region) => (
+                <button
+                  key={region}
+                  className={`region-mode-btn ${regionMode === region ? 'active' : ''}`}
+                  onClick={() => setRegionMode(region)}
+                >
+                  {region}
+                </button>
+              ))}
             </div>
             <div className="regions-grid">
-              {regions.map((region) => {
+              {visibleRegions.map((region) => {
                 const regionStudents = students
-                  .filter(s => s.school === region)
+                  .filter((s) => getStudentRegion(s) === region)
                   .map(s => s.id);
                 const regionStats = calculateFinanceStats(regionStudents);
 
@@ -283,15 +409,15 @@ export const Statistics: React.FC = () => {
                   <div key={region} className="region-card">
                     <div className="statistics-card-header">
                       <h4>{region}</h4>
-                      <p>Regionálny finančný prehľad</p>
+                      <p>Regionálne info</p>
                     </div>
                     <div className="region-stats">
                       <div className="region-stat-row">
-                        <span className="stat-label">Platené:</span>
+                        <span className="stat-label">Zaplatené do obdobia:</span>
                         <span className="stat-number">{regionStats.paid.toFixed(2)} €</span>
                       </div>
                       <div className="region-stat-row">
-                        <span className="stat-label">Očakávané:</span>
+                        <span className="stat-label">Očakavané do obdobia:</span>
                         <span className="stat-number">{regionStats.expected.toFixed(2)} €</span>
                       </div>
                       <div className="region-stat-row">
@@ -315,6 +441,180 @@ export const Statistics: React.FC = () => {
 
           <div className="refresh-section">
             <button 
+              onClick={loadStats}
+              className="refresh-btn"
+            >
+              Obnoviť štatistiky
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* TAB: ŠTUDENTI */}
+      {tab === 'students' && (
+        <div className="statistics-tab-content">
+          <div className="finance-table-section">
+            <div className="statistics-card-header">
+              <h3>Period</h3>
+              <p>Počet študentov podľa typu obdobia platieb</p>
+            </div>
+            <div className="finance-table-wrapper">
+              <table className="finance-table">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Half-year</th>
+                    <th>Month</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{studentsStats.periodStats.year}</td>
+                    <td>{studentsStats.periodStats.halfYear}</td>
+                    <td>{studentsStats.periodStats.month}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="finance-table-section" style={{ marginTop: 20 }}>
+            <div className="statistics-card-header">
+              <h3>Suma: Classic</h3>
+              <p>Klasicky platiaci študenti. Spolu platiacich: {studentsStats.classicTotal}</p>
+            </div>
+            <div className="finance-table-wrapper">
+              <table className="finance-table">
+                <thead>
+                  <tr>
+                    <th>PLNÁ SUMA</th>
+                    <th>Počet študentov</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>400 €</td>
+                    <td>{studentsStats.classicStats.amount400}</td>
+                  </tr>
+                  <tr>
+                    <td>360 €</td>
+                    <td>{studentsStats.classicStats.amount360}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="finance-table-section" style={{ marginTop: 20 }}>
+            <div className="statistics-card-header">
+              <h3>Suma: Scholarship</h3>
+              <p> Študenti so štipendium. Spolu platiacich: {studentsStats.scholarshipTotal}</p>
+            </div>
+            <div className="finance-table-wrapper">
+              <table className="finance-table">
+                <thead>
+                  <tr>
+                    <th>Plná suma</th>
+                    <th>Počet študentov</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {studentsStats.scholarshipRows.map(([fullAmount, count]) => (
+                    <tr key={fullAmount}>
+                      <td>{fullAmount.toFixed(2)} €</td>
+                      <td>{count}</td>
+                    </tr>
+                  ))}
+                  {studentsStats.scholarshipRows.length === 0 && (
+                    <tr>
+                      <td colSpan={2}>Žiadne hodnoty</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="regions-section" style={{ marginTop: 20 }}>
+            <div className="region-modes">
+              <button
+                className={`region-mode-btn ${regionMode === 'all' ? 'active' : ''}`}
+                onClick={() => setRegionMode('all')}
+              >
+                Všetky regióny
+              </button>
+              {regions.map((region) => (
+                <button
+                  key={`students-mode-${region}`}
+                  className={`region-mode-btn ${regionMode === region ? 'active' : ''}`}
+                  onClick={() => setRegionMode(region)}
+                >
+                  {region}
+                </button>
+              ))}
+            </div>
+
+            <div className="regions-grid">
+              {visibleRegions.map((region) => {
+                const regionStudentsData = students.filter((s) => getStudentRegion(s) === region);
+                const regionStudentStats = calculateStudentStats(regionStudentsData);
+
+                return (
+                  <div key={`students-${region}`} className="region-card">
+                    <div className="statistics-card-header">
+                      <h4>{region}</h4>
+                      <p>Regionálne info</p>
+                    </div>
+                    <div className="region-stats">
+                      <div className="region-stat-row">
+                        <span className="stat-label">Year:</span>
+                        <span className="stat-number">{regionStudentStats.periodStats.year}</span>
+                      </div>
+                      <div className="region-stat-row">
+                        <span className="stat-label">Half-year:</span>
+                        <span className="stat-number">{regionStudentStats.periodStats.halfYear}</span>
+                      </div>
+                      <div className="region-stat-row">
+                        <span className="stat-label">Month:</span>
+                        <span className="stat-number">{regionStudentStats.periodStats.month}</span>
+                      </div>
+
+                      <div className="region-group-divider" />
+
+                      <div className="region-stat-row">
+                        <span className="stat-label">Classic spolu:</span>
+                        <span className="stat-number">{regionStudentStats.classicTotal}</span>
+                      </div>
+                      <div className="region-stat-row">
+                        <span className="stat-label">Classic 400:</span>
+                        <span className="stat-number">{regionStudentStats.classicStats.amount400}</span>
+                      </div>
+                      <div className="region-stat-row">
+                        <span className="stat-label">Classic 360:</span>
+                        <span className="stat-number">{regionStudentStats.classicStats.amount360}</span>
+                      </div>
+
+                      <div className="region-group-divider" />
+
+                      <div className="region-stat-row">
+                        <span className="stat-label">Scholarship spolu:</span>
+                        <span className="stat-number">{regionStudentStats.scholarshipTotal}</span>
+                      </div>
+                      {regionStudentStats.scholarshipRows.map(([fullAmount, count]) => (
+                        <div className="region-stat-row" key={`${region}-sch-${fullAmount}`}>
+                          <span className="stat-label">Scholarship {fullAmount.toFixed(2)} €:</span>
+                          <span className="stat-number">{count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="refresh-section">
+            <button
               onClick={loadStats}
               className="refresh-btn"
             >
