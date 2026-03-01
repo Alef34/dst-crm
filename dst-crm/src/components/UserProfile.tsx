@@ -41,7 +41,6 @@ interface PaymentInfo {
 // UserProfile component
 
 export const UserProfile = () => {
-  // Local component state: profile data, edit mode, loading lifecycle, and payments list.
   const { user } = useAuth();
   const [studentData, setStudentData] = useState<StudentData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -153,7 +152,7 @@ export const UserProfile = () => {
           
           // If a composite index is missing, Firestore returns failed-precondition.
           if (queryError?.code === 'failed-precondition') {
-            console.error("❌ FIRESTORE INDEX IS MISSING. Create the index using the link in the error output.");
+            console.error(" FIRESTORE INDEX IS MISSING. Create the index using the link in the error output.");
           }
           
           setPayments([]);
