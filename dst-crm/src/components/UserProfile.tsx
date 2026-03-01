@@ -207,19 +207,30 @@ export const UserProfile = () => {
     return <div className="error">Študentský záznam nenájdený</div>;
   }
 
-  // the progress ber numbers
-  const totalAmount =
-    Number(String(studentData?.amount || "0").replace(",", ".")) || 0;
+  const normalizePeriod = (value?: string) => {
+    const v = (value ?? "").toLowerCase().trim();
+    if (v === "year" || v === "yearly") return 1;
+    if (v.startsWith("half")) return 2;
+    if (v === "month" || v === "monthly") return 10;
+    return 1;
+  };
 
-  // paid so far = on progres bar
+  const amountPerInstallment =
+    Number(String(studentData?.amount || "0").replace(",", ".")) || 0;
+  const installmentsPerYear = normalizePeriod(studentData?.period);
+  const targetTotal = amountPerInstallment * installmentsPerYear;
+
   const paidSoFar = payments.reduce((sum, payment) => {
     const amount = Number(String(payment.amount ?? "0").replace(",", "."));
     return sum + (Number.isNaN(amount) ? 0 : amount);
   }, 0);
+
   const progressPercent =
-    totalAmount > 0
-      ? Math.min(100, Math.max(0, (paidSoFar / totalAmount) * 100))
+    targetTotal > 0
+      ? Math.min(100, Math.max(0, (paidSoFar / targetTotal) * 100))
       : 0;
+  const progressPercentDisplay =
+    targetTotal > 0 ? Math.max(0, (paidSoFar / targetTotal) * 100) : 0;
 
   //the payments reminders in the profile -- THEY NEED TO BE CONNECTED TO THE AUTOMATIC REMINDER, ADN TO THE ADMIN SO WE CAN OVERRIDE THEM, WHEN NEEDED -- THESE JUST SHOW THE DEADLINS
   type PaymentPlan = "Year" | "Half-year" | "Monthly";
@@ -243,14 +254,16 @@ export const UserProfile = () => {
   }
 
   function getPlanFromStudent(
+    periodRaw: string | undefined,
     typeOfPaymentRaw: string | undefined
   ): PaymentPlan {
-    const t = (typeOfPaymentRaw || "").toLowerCase();
+    const period = (periodRaw || "").toLowerCase();
+    const type = (typeOfPaymentRaw || "").toLowerCase();
+    const combined = `${period} ${type}`;
 
-    if (t.includes("year") || t.includes("roč")) return "Year";
-    if (t.includes("half") || t.includes("pol")) return "Half-year";
-    if (t.includes("month") || t.includes("mesa")) return "Monthly";
-    //is meissing defall fallbakc?
+    if (combined.includes("month") || combined.includes("mesa")) return "Monthly";
+    if (combined.includes("half") || combined.includes("pol")) return "Half-year";
+    if (combined.includes("year") || combined.includes("roč")) return "Year";
     return "Year";
   }
 
@@ -287,10 +300,12 @@ export const UserProfile = () => {
   }
 
   function getNextPaymentDeadlineText(
+    periodRaw: string | undefined,
     typeOfPaymentRaw: string | undefined,
+    unpaidAmount: number,
     today = new Date()
   ) {
-    const plan = getPlanFromStudent(typeOfPaymentRaw);
+    const plan = getPlanFromStudent(periodRaw, typeOfPaymentRaw);
     const schoolYearStart = getSchoolYearStart(today);
     const deadlines = getDeadlinesForPlan(plan, schoolYearStart);
 
@@ -299,52 +314,61 @@ export const UserProfile = () => {
       return "Ešte nemáš deadline na platbu";
     }
 
-    const next = deadlines.find((d) => d.getTime() >= today.getTime());
+    const nextByDate = deadlines.find((d) => d.getTime() >= today.getTime());
 
-    if (!next) {
+    if (!nextByDate) {
+      if (unpaidAmount > 0) {
+        return "Uhraď prosím všetky neuhradené platby čo najskôr";
+      }
       return "Jupííí, všetko uhradené";
     }
 
-    return `Najbližší deadline: ${formatSK(next)}`;
+    return formatSK(nextByDate);
   }
 
  
   return (
     <div className="user-profile-container">
       <div className="profile-grid">
-        {/* PHOTO */}
-        <aside className="profile-photo-card">
-          <img
-            className="profile-avatar"
-            src={
-              user?.photoURL ||
-              "https://wallpapers.com/images/hd/cute-cat-eyes-profile-picture-uq3edzmg1guze2hh.jpg"
-            }
-            alt="Profilová fotka"
-          />
-
-          {/* PAYMENT PROGRESS */}
+        {/* PROGRESS */}
+        <aside className="profile-photo-card profile-progress-card">
           <div className="payment-progress">
-            <div className="progress-title">Platby</div>
-
-            <div className="progress-info">{paidSoFar.toFixed(0)} € platených</div>
+            <h3 className="card-title progress-card-title">Progress Bar</h3>
 
             <div className="progress-wrap">
-              <div className="progress-bar">
-                <div
-                  className="progress-fill"
-                  style={{ height: `${progressPercent}%` }}
-                />
+              <div className="progress-meta">
+                <div className="progress-row">
+                  <span>Zaplatené</span>
+                  <b>{paidSoFar.toFixed(0)} €</b>
+                </div>
+                <div className="progress-row">
+                  <span>Očakávané</span>
+                  <b>{targetTotal.toFixed(0)} €</b>
+                </div>
+                <div className="progress-row progress-row-percent">
+                  <span>Splnené</span>
+                  <b>{progressPercentDisplay.toFixed(0)}%</b>
+                </div>
               </div>
 
-              <div className="progress-meta">
-                <div>
-                  <b>{paidSoFar.toFixed(0)} €</b> zaplatené
+              <div className="progress-bar-wrap">
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill"
+                    style={{ width: `${progressPercent}%` }}
+                  />
                 </div>
-                <div>{totalAmount.toFixed(0)} € celkom</div>
-                <div className="progress-percent">
-                  {progressPercent.toFixed(0)}%
-                </div>
+              </div>
+
+              <div className="progress-deadline">
+                <span className="field-label">Najbližší deadline</span>
+                <span className="field-value">
+                  {getNextPaymentDeadlineText(
+                    studentData?.period,
+                    studentData?.typeOfPayment,
+                    Math.max(0, targetTotal - paidSoFar)
+                  )}
+                </span>
               </div>
             </div>
           </div>
@@ -539,12 +563,6 @@ export const UserProfile = () => {
               </span>
             </div>
 
-            <div className="profile-field profile-field-full">
-              <span className="field-label">Najbližší deadline</span>
-              <span className="field-value">
-                {getNextPaymentDeadlineText(studentData?.typeOfPayment)}
-              </span>
-            </div>
           </div>
         </section>
 
