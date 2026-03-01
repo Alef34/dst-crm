@@ -437,69 +437,46 @@ export const Communication: React.FC = () => {
 
       {/* Email Modal */}
       {showEmailModal && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          zIndex: 1000,
-        }}>
-          <div style={{
-            backgroundColor: "white",
-            padding: "20px",
-            borderRadius: "8px",
-            maxWidth: "500px",
-            width: "90%",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-          }}>
-            <h3>Odoslať email</h3>
-            <p>Vybratí študenti: <strong>{selectedStudents.size}</strong></p>
+        <div className="email-modal-overlay">
+          <div className="email-modal">
+            <h3 className="email-modal-title">Odoslať email</h3>
+            <p className="email-modal-count">
+              Vybratí študenti: <strong>{selectedStudents.size}</strong>
+            </p>
 
-            <div style={{ marginBottom: "12px" }}>
-              <label>Predmet:</label>
+            <div className="email-field">
+              <label className="email-label">Predmet:</label>
               <input
                 type="text"
                 value={emailSubject}
                 onChange={(e) => setEmailSubject(e.target.value)}
                 placeholder="Napr. Upozornenie na platbu"
-                style={{ width: "100%", padding: "8px", marginTop: "4px", marginBottom: "12px", border: "1px solid #ccc", borderRadius: "4px" }}
+                className="email-input"
               />
             </div>
 
-            <div style={{ marginBottom: "12px" }}>
-              <label>Správa:</label>
+            <div className="email-field">
+              <label className="email-label">Správa:</label>
               <textarea
                 value={emailText}
                 onChange={(e) => setEmailText(e.target.value)}
                 placeholder="Napíšte správu..."
                 rows={6}
-                style={{ width: "100%", padding: "8px", marginTop: "4px", marginBottom: "12px", border: "1px solid #ccc", borderRadius: "4px", fontFamily: "Arial" }}
+                className="email-textarea"
               />
             </div>
 
-            <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+            <div className="email-modal-actions">
               <button
                 onClick={() => setShowEmailModal(false)}
-                style={{ padding: "8px 16px", border: "1px solid #ccc", borderRadius: "4px", cursor: "pointer", backgroundColor: "#f5f5f5" }}
+                className="email-modal-btn"
               >
                 Zrušiť
               </button>
               <button
                 onClick={sendEmailToSelected}
                 disabled={sendingEmail}
-                style={{
-                  padding: "8px 16px",
-                  backgroundColor: sendingEmail ? "#999" : "#0066cc",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: sendingEmail ? "not-allowed" : "pointer",
-                }}
+                className="email-modal-btn email-modal-btn-primary"
               >
                 {sendingEmail ? "Odosielam..." : "Odoslať email"}
               </button>

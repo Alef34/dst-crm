@@ -102,7 +102,7 @@ export const Dashboard = () => {
       </header>
 
       <main className="dashboard-main">
-        {/* Role-based conditional rendering: admin tab shell, team stats only, student profile only. */}
+        {/* Role-based conditional rendering */}
         {isAdmin ? (
           <div className="admin-section">
             <div className="admin-tabs">

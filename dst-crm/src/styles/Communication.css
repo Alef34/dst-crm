@@ -315,6 +315,128 @@
   transform: translateY(1px);
 }
 
+/* Email modal */
+.email-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.68);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.email-modal {
+  width: 100%;
+  max-width: 640px;
+  background: #dfe3e8;
+  border-radius: 10px;
+  border: 1px solid #c5c9cf;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  padding: 24px;
+}
+
+.email-modal-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #4b4a4a;
+}
+
+.email-modal-count {
+  margin: 8px 0 20px 0;
+  color: #4b4a4a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.email-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: min(100%, 560px);
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 14px;
+}
+
+.email-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4b4a4a;
+}
+
+.email-input,
+.email-textarea {
+  width: 100%;
+  border: 1px solid #d3d5d5;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #4b4a4a;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 12px;
+}
+
+.email-input:focus,
+.email-textarea:focus {
+  outline: none;
+  border-color: #999;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+.email-textarea {
+  resize: vertical;
+  min-height: 130px;
+  font-family: inherit;
+}
+
+.email-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+  width: min(100%, 560px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.email-modal-btn {
+  cursor: pointer;
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid #d3d5d5;
+  background: #ffffff;
+  color: #4b4a4a;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.email-modal-btn:hover {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+.email-modal-btn-primary {
+  background: #f3f343;
+  border-color: #f3f343;
+}
+
+.email-modal-btn-primary:hover {
+  background: #dddd3d;
+  border-color: #dddd3d;
+}
+
+.email-modal-btn:disabled,
+.email-modal-btn-primary:disabled {
+  background: #d3d5d5;
+  border-color: #d3d5d5;
+  color: #7f8080;
+  cursor: not-allowed;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .installments-check-container .header {
@@ -350,6 +472,19 @@
   }
 
   .controls input[type="number"] {
+    width: 100%;
+  }
+
+  .email-modal {
+    padding: 18px;
+  }
+
+  .email-modal-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .email-modal-btn {
     width: 100%;
   }
 }
