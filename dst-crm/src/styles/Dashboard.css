@@ -1,0 +1,204 @@
+.dashboard-container {
+  min-height: 100vh;
+  background-color: #5c5c5c;
+   overflow-x: hidden;
+  ;
+}
+
+.dashboard-header {
+  background: #4b4a4a;
+  padding: 20px 40px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.dashboard-header h1 {
+  color: white;
+  margin: 0;
+  font-size: 24px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.role-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.role-badge.admin {
+  background-color: #ffa5eb;
+  color: #4b4a4a;
+  padding: px 10px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+}
+
+.role-badge.student {
+  background-color: #f3f343;
+  color: #4b4a4a;
+  padding: px 10px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+}
+
+.role-badge.team {
+  background-color: #fd5300;
+  color: white;
+  padding: px 10px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+
+.logout-btn {
+  padding: 10px 20px;
+  background-color: #fd5300;
+  color: white;
+  font-size: 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 750;
+  transition: background-color 0.3s ease;
+  letter-spacing: 0.07em;
+}
+  
+
+.logout-btn:hover, .change-credentials-btn:hover {
+  background-color: #5c5c5c;
+}
+
+/*
+.change-credentials-btn{
+   padding: 10px 20px;
+  background-color: #ffa5eb;
+  color: white;
+  font-size: 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 750;
+  transition: background-color 0.3s ease;
+  letter-spacing: 0.07em;
+}
+*/
+
+
+.dashboard-main {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* this creates all second names (student import, emails, and users)*/
+.dashboard-main h2 {
+  color: whitesmoke;
+  margin-bottom: 30px;
+  font-size: 28px;
+  margin: 0 0 20px 0;
+
+}
+
+.admin-features,
+.user-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid whitesmoke;
+  padding-bottom: 8px;
+}
+
+.tab-btn {
+  padding: 12px 24px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: whitesmoke;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.tab-btn:hover {
+  color: #ababab;
+  border-bottom-color: #ababab;
+  margin-bottom: 4px;
+  border-bottom-width: 3px;
+}
+
+.tab-btn.active {
+  color: #ffa5eb;
+  border-bottom-color: #ffa5eb;
+  margin-bottom: 2px;
+  border-bottom-width: 3px;
+
+}
+
+.feature-card {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.feature-card h3 {
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.feature-card p {
+  color: #666;
+  margin: 0;
+  font-size: 14px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 18px;
+  color: #666;
+}

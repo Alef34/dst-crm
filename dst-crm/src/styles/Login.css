@@ -1,0 +1,239 @@
+/* backgroud*/
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  /*background: linear-gradient(135deg, #f0f044 25%, #b98204 100%);*/
+  background: linear-gradient(135deg, #606060 25%, #2d2d2d 100%);
+}
+
+/* the white big box*/
+.login-box {
+  background: whitesmoke;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+/* prihlasenie -- name*/
+.login-box h1 {
+  color: #4b4a4a;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+/* Prihlasenie/registracia */
+.mode-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #dcdcdc;
+}
+
+/* Prihlasenie/registracia -- form */
+.mode-tab {
+  flex: 1;
+  padding: 12px 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #818181;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+
+/* Prihlasenie/registracia - active stav */
+.mode-tab.active {
+  color: #4b4a4a;
+  border-bottom-color: #4b4a4a;
+  border-bottom-width: 3px;
+  font-weight: 700;
+
+}
+
+.mode-tab:hover {
+  color: #fd5300;
+  border-bottom-color: #fd5300;
+  margin-bottom: 4px;}
+
+/* formatingi within the  white box*/
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+/* */
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d3d5d5;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #4b4a4a;
+  background: #fff;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+/* */
+.form-input:focus {
+  outline: none;
+  border-color: #999;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+/* erros formating*/
+.error-message {
+  color: #e74c3c;
+  font-size: 12px;
+  padding: 10px;
+  background-color: #fadbd8;
+  border-radius: 4px;
+  margin-top: -5px;
+}
+
+/* THW MAIN SUBBITT BUTTON */
+.submit-btn {
+  padding: 12px 24px;
+  background-color: #fd5300;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.submit-btn:hover:not(:disabled) {
+  background-color: #6e4e03;
+  box-shadow: 0 4px 12px rgba(246, 192, 56, 0.349);
+}
+/* 
+.divider {
+  color: #999;
+  font-size: 12px;
+  margin: 25px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.google-signin-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 24px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+.google-signin-btn:hover {
+  background: #f8f8f8;
+  border-color: #999;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.google-signin-btn:active {
+  transform: scale(0.98);
+}
+
+
+.google-icon {
+  width: 20px;
+  height: 20px;
+}
+*/
+
+/*styles for askign access*/
+
+/*
+
+.request-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+
+.request-info p {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+
+.request-link-btn {
+  width: 100%;
+  padding: 12px 24px;
+  background-color: #fd5300;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+.request-link-btn:hover {
+  background-color: #6e4e03;
+  box-shadow: 0 4px 12px rgba(182, 140, 89, 0.4);
+}
+
+
+.request-link-btn:hover {
+  background-color: #6e4e03;
+  box-shadow: 0 4px 12px rgba(182, 140, 89, 0.4);
+}
+
+
+.submit-btn {
+  width: 100%;
+  padding: 12px 24px;
+  background-color: #fd5300;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #6e4e03;
+  box-shadow: 0 4px 12px rgba(246, 192, 56, 0.349);
+}
+
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+*/

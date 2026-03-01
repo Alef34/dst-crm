@@ -1,0 +1,187 @@
+.users-management-container {
+   width: 100%;
+  margin: 0;
+  padding: 0;
+   padding-bottom: 120px; 
+}
+
+.users-management-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+  border-bottom: 2px solid whitesmoke;
+  padding-bottom: 15px;
+}
+
+.users-management-header p {
+   color: whitesmoke;
+  font-size: 13px;
+  margin: 0;
+  font-weight: 500;
+}
+
+.users-management-card {
+  background: whitesmoke;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+}
+
+.message {
+  padding: 15px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.message-success {
+  background-color: #d4edda;
+  color: #02c42f;
+  border: 1px solid #c3e6cb;
+}
+
+.message-error {
+  background-color: #f8d7da;
+  color: #cd0217;
+  border: 1px solid #f5c6cb;
+}
+
+.empty-message {
+  text-align: center;
+  color: #999;
+  padding: 40px 20px;
+  font-size: 14px;
+}
+
+.users-table-wrapper {
+  overflow-x: auto;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table thead {
+  background-color:  #eaebec;
+}
+
+.users-table th {
+  padding: 15px;
+  text-align: left;
+  font-weight: 700;
+  color: #4b4a4a;
+  border-bottom: 2px solid #ecf0f1;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+    border-bottom: 2px solid #d3d5d5;
+
+}
+
+.users-table td {
+  padding: 15px;
+  border-bottom: 1px solid #d3d5d5;
+  color: #4b4a4a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* not clickable, nto neccesary */
+/*
+.users-table tbody tr:hover {
+  background-color: gray;
+}
+*/
+
+.role-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.role-badge.admin {
+  background-color: #ffa5eb;
+  color: #4b4a4a;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+}
+
+.role-badge.student {
+  background-color: #f3f343;
+  color: #4b4a4a;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+}
+
+.role-badge.team {
+  background-color: #fd5300;
+  color: white;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+}
+
+.role-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: white;
+  transition: all 0.3s ease;
+  color: #4b4a4a;
+  font-weight: 550;
+}
+
+.role-select:hover {
+  border-color: #999;
+}
+
+.role-select:focus {
+  outline: none;
+  border-color: #7f8080;
+
+}
+
+/* Responzívnosť */
+@media (max-width: 768px) {
+  .users-management-card {
+    padding: 20px;
+  }
+
+  .users-management-header h2 {
+    font-size: 24px;
+  }
+
+  .users-table th,
+  .users-table td {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .role-select {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .users-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .users-table {
+    min-width: 600px;
+  }
+}

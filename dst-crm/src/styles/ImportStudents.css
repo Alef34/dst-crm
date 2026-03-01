@@ -1,0 +1,176 @@
+.import-students-container{
+  width: 100%;
+  margin: 0;
+  padding: 0;
+   padding-bottom: 120px; 
+}
+
+
+.import-grid  {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+  align-items: stretch;
+}
+
+
+.import-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 15px;
+}
+
+
+
+.import-header p {
+  color: whitesmoke;
+  font-size: 13px;
+  margin: 0;
+  font-weight: 500;
+  
+}
+
+.import-card {
+  background: whitesmoke;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+}
+
+.file-input-wrapper {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.file-input-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #ffa5eb;
+  color: #5c5c5c;
+  font-size: 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 750;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
+  border: none;
+  letter-spacing: 0.07em;
+}
+
+.file-input-label:hover {
+  background-color: #979696;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-name {
+  display: block;
+  color: #4b4a4a;
+  font-size: 13px;
+  margin-top: 10px;
+  font-weight: 600;
+
+}
+
+.format-info {
+  background-color: #eaebec;
+  border-left: 4px solid #ffa5eb;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 4px;
+
+   flex: 1;
+  min-height: 0;
+
+}
+
+.format-info h3 {
+  color: #4b4a4a;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.format-info pre {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 0;
+  color: #4b4a4a;
+  
+}
+
+.import-btn {
+  display: block;
+  width: 100%;
+  padding: 14px 24px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+
+   margin-top: auto;
+}
+
+.import-btn:hover:not(:disabled) {
+  background-color: #229954;
+}
+
+.import-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.message {
+  margin-top: 20px;
+  padding: 15px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.message-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.message-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Responzívnosť */
+@media (max-width: 600px) {
+  .import-card {
+    padding: 20px;
+  }
+
+  .import-header h2 {
+    font-size: 24px;
+  }
+
+  .format-info pre {
+    font-size: 11px;
+  }
+}
