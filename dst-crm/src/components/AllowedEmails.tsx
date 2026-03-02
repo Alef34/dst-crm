@@ -7,7 +7,9 @@ interface AllowedEmail {
   id: string;
   email: string;
   addedAt: Date;
+  
 }
+
 
 export const AllowedEmails = () => {
   // Component-level state: list data, form input, and UX feedback states.
