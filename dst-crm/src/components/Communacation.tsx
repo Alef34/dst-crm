@@ -37,6 +37,8 @@ const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 
 interface CommunicationProps {
   selectedCohort?: string;
+  selectedInstallmentCheckpoint?: number;
+  onSelectedInstallmentCheckpointChange?: (value: number) => void;
 }
 
 const getCohortFromVS = (vs?: string) => {
@@ -45,14 +47,18 @@ const getCohortFromVS = (vs?: string) => {
   return clean.slice(0, 4);
 };
 
-export const Communication: React.FC<CommunicationProps> = ({ selectedCohort = "all" }) => {
+export const Communication: React.FC<CommunicationProps> = ({
+  selectedCohort = "all",
+  selectedInstallmentCheckpoint,
+  onSelectedInstallmentCheckpointChange,
+}) => {
   // Central data + UI state for payment checks, filters, and email sending.
   const [students, setStudents] = useState<StudentData[]>([]);
   const [payments, setPayments] = useState<PaymentInfo[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Number 1..10 entered by the user
-  const [installmentIndex, setInstallmentIndex] = useState<number>(1);
+  const [localInstallmentIndex, setLocalInstallmentIndex] = useState<number>(1);
 
   // Option to locally override expected amount for a student: map studentId -> overrideNumber
   const [overrides, setOverrides] = useState<Record<string, number>>({});
@@ -71,6 +77,9 @@ export const Communication: React.FC<CommunicationProps> = ({ selectedCohort = "
 
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">("success");
+
+  const installmentIndex = selectedInstallmentCheckpoint ?? localInstallmentIndex;
+  const setInstallmentIndex = onSelectedInstallmentCheckpointChange ?? setLocalInstallmentIndex;
 
   useEffect(() => {
     // One-shot load on mount: this component uses an immediate Firestore snapshot.

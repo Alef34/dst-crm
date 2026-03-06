@@ -23,6 +23,7 @@ export const Dashboard = () => {
   const [dashboardName, setDashboardName] = useState('');
   const [studentNoteReminderCount, setStudentNoteReminderCount] = useState(0);
   const [globalCohort, setGlobalCohort] = useState('all');
+  const [globalInstallmentCheckpoint, setGlobalInstallmentCheckpoint] = useState(1);
   const [cohortOptions, setCohortOptions] = useState<string[]>([]);
   const navigate = useNavigate();
 
@@ -225,11 +226,19 @@ export const Dashboard = () => {
             {adminTab === 'students' && (
               <StudentsManagement onRemindersChanged={setStudentNoteReminderCount} selectedCohort={globalCohort} />
             )}
-            {adminTab === 'communication' && <Communication selectedCohort={globalCohort} />}
+            {adminTab === 'communication' && (
+              <Communication
+                selectedCohort={globalCohort}
+                selectedInstallmentCheckpoint={globalInstallmentCheckpoint}
+                onSelectedInstallmentCheckpointChange={setGlobalInstallmentCheckpoint}
+              />
+            )}
             {adminTab === 'statistics' && (
               <Statistics
                 selectedCohort={globalCohort}
                 onSelectedCohortChange={setGlobalCohort}
+                selectedInstallmentCheckpoint={globalInstallmentCheckpoint}
+                onSelectedInstallmentCheckpointChange={setGlobalInstallmentCheckpoint}
               />
             )}
           </div>
@@ -238,6 +247,8 @@ export const Dashboard = () => {
             <Statistics
               selectedCohort={globalCohort}
               onSelectedCohortChange={setGlobalCohort}
+              selectedInstallmentCheckpoint={globalInstallmentCheckpoint}
+              onSelectedInstallmentCheckpointChange={setGlobalInstallmentCheckpoint}
             />
           </div>
         ) : (
