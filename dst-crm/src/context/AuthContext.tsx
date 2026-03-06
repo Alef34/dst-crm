@@ -2,10 +2,26 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { User } from 'firebase/auth';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 
 export type UserRole = 'admin' | 'student' | 'team' | null;
+
+const normalizeRole = (rawRole: unknown): Exclude<UserRole, null> => {
+  const role = String(rawRole ?? '').toLowerCase().trim();
+  if (role === 'admin') return 'admin';
+  if (role === 'team') return 'team';
+  // Default/fallback behavior: all other values (including legacy "user") are students.
+  return 'student';
+};
+
+const pickHigherPriorityRole = (
+  a: Exclude<UserRole, null>,
+  b: Exclude<UserRole, null>
+): Exclude<UserRole, null> => {
+  const score = (role: Exclude<UserRole, null>) => (role === 'admin' ? 3 : role === 'team' ? 2 : 1);
+  return score(a) >= score(b) ? a : b;
+};
 
 interface AuthContextType {
   user: User | null;
@@ -30,12 +46,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (currentUser) {
         // Load the user's role from Firestore
         try {
-          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          const [userDoc, usersByEmailSnap] = await Promise.all([
+            getDoc(doc(db, 'users', currentUser.uid)),
+            currentUser.email
+              ? getDocs(query(collection(db, 'users'), where('email', '==', currentUser.email.toLowerCase())))
+              : Promise.resolve(null as any),
+          ]);
+
+          let resolvedRole: Exclude<UserRole, null> = 'student';
+
           if (userDoc.exists()) {
-            setRole(userDoc.data().role || 'student');
-          } else {
-            setRole('student');
+            resolvedRole = normalizeRole(userDoc.data().role);
           }
+
+          if (usersByEmailSnap && !usersByEmailSnap.empty) {
+            usersByEmailSnap.docs.forEach((d: any) => {
+              const candidate = normalizeRole(d.data().role);
+              resolvedRole = pickHigherPriorityRole(resolvedRole, candidate);
+            });
+          }
+
+          setRole(resolvedRole);
         } catch (error) {
           console.error('Error loading user role:', error);
           setRole('student');

@@ -3,7 +3,6 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import { useNavigate } from 'react-router-dom';
 import { ImportStudents } from './ImportStudents';
-import { AllowedEmails } from './AllowedEmails';
 import { UsersManagement } from './UsersManagement';
 import { useEffect, useState } from 'react';
 import '../styles/Dashboard.css';
@@ -19,7 +18,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 
 export const Dashboard = () => {
   // Active admin tab UI state: idiomatic React pattern with a single source of UI truth.
-  const [adminTab, setAdminTab] = useState<'import' | 'communication' | 'students'| 'emails' | 'payments' | 'users' | 'statistics'>('import');
+  const [adminTab, setAdminTab] = useState<'import' | 'communication' | 'students' | 'payments' | 'users' | 'statistics'>('import');
   const { user, role, isAdmin, isTeam } = useAuth();
   const [dashboardName, setDashboardName] = useState('');
   const [studentNoteReminderCount, setStudentNoteReminderCount] = useState(0);
@@ -137,12 +136,6 @@ export const Dashboard = () => {
                 Import
               </button>
               <button
-                className={`tab-btn ${adminTab === 'emails' ? 'active' : ''}`}
-                onClick={() => setAdminTab('emails')}
-              >
-                Povolené emaily
-              </button>
-              <button
                 className={`tab-btn ${adminTab === 'users' ? 'active' : ''}`}
                 onClick={() => setAdminTab('users')}
               >
@@ -179,7 +172,6 @@ export const Dashboard = () => {
               </button>
             </div>
             {adminTab === 'import' && <ImportStudents />}
-            {adminTab === 'emails' && <AllowedEmails />}
             {adminTab === 'users' && <UsersManagement />}
             {adminTab === 'payments' && <PaymentsManagement />}
             {adminTab === 'students' && (

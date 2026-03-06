@@ -17,28 +17,37 @@ export const Login = () => {
 
   const isEmailAllowed = async (userEmail: string): Promise<boolean> => {
     try {
+      const normalizedEmail = userEmail.toLowerCase();
+
       // Admin email bez whitelistu
       const adminEmail = import.meta.env.VITE_ADMIN_EMAIL?.toLowerCase();
-      if (userEmail.toLowerCase() === adminEmail) {
+      if (normalizedEmail === adminEmail) {
         console.log('Admin email - bypass whitelist');
         return true;
       }
 
-      console.log('Kontrolujem email:', userEmail.toLowerCase());
-      // "students.mail" is the whitelist source for app access.
-      const allowedEmailsRef = collection(db, 'students');
+      console.log('Kontrolujem email:', normalizedEmail);
 
-      // Check email against the whitelist source
-      const q = query(allowedEmailsRef, where('mail', '==', userEmail.toLowerCase()));
-      const querySnapshot = await getDocs(q);
-      console.log('Query result:', querySnapshot.empty ? 'EMPTY' : 'FOUND');
-      console.log('Number of matching emails:', querySnapshot.size);
-      
-      return !querySnapshot.empty;
+      // Access is allowed when email exists in students OR in users.
+      const [studentsSnapshot, usersSnapshot] = await Promise.all([
+        getDocs(query(collection(db, 'students'), where('mail', '==', normalizedEmail))),
+        getDocs(query(collection(db, 'users'), where('email', '==', normalizedEmail))),
+      ]);
+
+      const isAllowed = !studentsSnapshot.empty || !usersSnapshot.empty;
+      console.log('Whitelist result:', isAllowed ? 'FOUND' : 'EMPTY');
+      return isAllowed;
     } catch (error) {
       console.error('Error checking email access:', error);
       return false;
     }
+  };
+
+  const normalizeRole = (rawRole: unknown): 'admin' | 'student' | 'team' => {
+    const role = String(rawRole ?? '').toLowerCase().trim();
+    if (role === 'admin') return 'admin';
+    if (role === 'team') return 'team';
+    return 'student';
   };
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
@@ -86,6 +95,21 @@ export const Login = () => {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       const user = result.user;
 
+      const normalizedEmail = (user.email ?? email).toLowerCase();
+
+      // If admin pre-created a role by email, keep that role after registration.
+      const existingUserQ = query(collection(db, 'users'), where('email', '==', normalizedEmail));
+      const existingUserSnap = await getDocs(existingUserQ);
+
+      let roleToSet: 'admin' | 'student' | 'team' = 'student';
+      if (!existingUserSnap.empty) {
+        existingUserSnap.docs.forEach((d) => {
+          const candidateRole = normalizeRole(d.data().role);
+          if (candidateRole === 'admin') roleToSet = 'admin';
+          else if (candidateRole === 'team' && roleToSet !== 'admin') roleToSet = 'team';
+        });
+      }
+
       // Set displayName on Firebase Auth profile
       if (displayName) {
         await updateProfile(user, { displayName });
@@ -95,10 +119,10 @@ export const Login = () => {
       console.log('Creating new user document with UID:', user.uid);
       // Denormalized profile snapshot: users collection stores data for role/admin views.
       await setDoc(doc(db, 'users', user.uid), {
-        email: user.email,
+        email: normalizedEmail,
         displayName: displayName || 'Užívateľ',
         photoURL: '',
-        role: 'user',
+        role: roleToSet,
         createdAt: new Date(),
       });
 
