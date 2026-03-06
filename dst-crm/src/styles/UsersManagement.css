@@ -28,6 +28,52 @@
 
 }
 
+.users-management-card h3 {
+  margin: 0 0 8px 0;
+  color: #4b4a4a;
+}
+
+.section-description {
+  margin: 0 0 12px 0;
+  color: #6a6a6a;
+  font-size: 13px;
+}
+
+.add-user-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.add-user-input,
+.add-user-select {
+  flex: 1;
+  min-width: 220px;
+  padding: 10px 12px;
+  border: 1px solid #d3d5d5;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #4b4a4a;
+  background: #fff;
+}
+
+.add-user-btn {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #27ae60;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.users-separator {
+  border: 0;
+  border-top: 1px solid #d3d5d5;
+  margin: 20px 0;
+}
+
 .message {
   padding: 15px 20px;
   border-radius: 6px;
@@ -130,6 +176,27 @@
   font-size: 13px;
   font-weight: 750;
   letter-spacing: 0.07em;
+}
+
+.user-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.delete-user-btn {
+  padding: 8px 12px;
+  background-color: #fd5300;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 650;
+}
+
+.delete-user-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .role-select {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc, addDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import '../styles/UsersManagement.css';
 
@@ -8,12 +8,24 @@ interface User {
   email: string;
   displayName: string;
   role: 'admin' | 'student' | 'team';
-  createdAt: Date;
+  createdAt: Date | null;
 }
+
+const normalizeRole = (rawRole: unknown): User['role'] => {
+  const role = String(rawRole ?? '').toLowerCase().trim();
+  if (role === 'admin') return 'admin';
+  if (role === 'team') return 'team';
+  return 'student';
+};
 
 export const UsersManagement = () => {
   // Local state stores: data, loading state, and feedback banner.
   const [users, setUsers] = useState<User[]>([]);
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserRole, setNewUserRole] = useState<'admin' | 'student' | 'team'>('student');
+  const [addingUser, setAddingUser] = useState(false);
+  const [deletingUserId, setDeletingUserId] = useState('');
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
@@ -26,24 +38,93 @@ export const UsersManagement = () => {
   const loadUsers = async () => {
     try {
       // Read-all + map transform pattern: Firestore docs -> typed UI model.
-      const querySnapshot = await getDocs(collection(db, 'users'));
+      const usersSnapshot = await getDocs(collection(db, 'users'));
+
       const usersList: User[] = [];
-      querySnapshot.forEach((doc) => {
+      usersSnapshot.forEach((userDoc) => {
         usersList.push({
-          id: doc.id,
-          email: doc.data().email || '',
-          displayName: doc.data().displayName || '',
-          role: doc.data().role || 'student',
-          createdAt: doc.data().createdAt?.toDate(),
+          id: userDoc.id,
+          email: userDoc.data().email || '',
+          displayName: userDoc.data().displayName || '',
+          role: normalizeRole(userDoc.data().role),
+          createdAt: userDoc.data().createdAt?.toDate ? userDoc.data().createdAt.toDate() : null,
         });
       });
-      setUsers(usersList.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()));
+
+      setUsers(usersList.sort((a, b) => (b.createdAt?.getTime?.() ?? 0) - (a.createdAt?.getTime?.() ?? 0)));
     } catch (error) {
       console.error('Error loading users:', error);
       setMessage('Chyba pri načítaní užívateľov');
       setMessageType('error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const email = newUserEmail.trim().toLowerCase();
+    if (!email) {
+      setMessage('Zadajte email');
+      setMessageType('error');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setMessage('Neplatný email formát');
+      setMessageType('error');
+      return;
+    }
+
+    if (users.some((item) => item.email.toLowerCase() === email)) {
+      setMessage('Používateľ s týmto emailom už existuje');
+      setMessageType('error');
+      return;
+    }
+
+    try {
+      setAddingUser(true);
+      await addDoc(collection(db, 'users'), {
+        email,
+        displayName: newUserName.trim(),
+        photoURL: '',
+        role: newUserRole,
+        createdAt: new Date(),
+      });
+
+      setNewUserEmail('');
+      setNewUserName('');
+      setNewUserRole('student');
+      setMessage('Používateľ bol pridaný do Firestore');
+      setMessageType('success');
+      await loadUsers();
+    } catch (error) {
+      console.error('Error adding user:', error);
+      setMessage('Chyba pri pridávaní používateľa');
+      setMessageType('error');
+    } finally {
+      setAddingUser(false);
+    }
+  };
+
+  const handleDeleteUser = async (id: string) => {
+    const confirmed = window.confirm('Naozaj chcete odstrániť tohto používateľa z Firestore?');
+    if (!confirmed) return;
+
+    try {
+      setDeletingUserId(id);
+      await deleteDoc(doc(db, 'users', id));
+      setMessage('Používateľ bol odstránený z Firestore');
+      setMessageType('success');
+      await loadUsers();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      setMessage('Chyba pri mazaní používateľa');
+      setMessageType('error');
+    } finally {
+      setDeletingUserId('');
     }
   };
 
@@ -73,7 +154,7 @@ export const UsersManagement = () => {
     <div className="users-management-container">
       <div className="users-management-header">
         <h2>Správa užívateľov</h2>
-        <p>Spravujte role a oprávnenia užívateľov</p>
+        <p>Spravujte používateľov, ich role a prístupy</p>
       </div>
 
       {message && (
@@ -83,6 +164,45 @@ export const UsersManagement = () => {
       )}
 
       <div className="users-management-card">
+        <h3>Pridať používateľa</h3>
+        <p className="section-description">
+          Toto vytvorí používateľa v kolekcii <b>users</b> vo Firestore. Nevytvára to Firebase Auth účet,
+          takže používateľ sa musí najprv zaregistrovať, aby sa mohol prihlásiť.
+        </p>
+
+        <form onSubmit={handleAddUser} className="add-user-form">
+          <input
+            type="text"
+            value={newUserName}
+            onChange={(e) => setNewUserName(e.target.value)}
+            placeholder="Meno (voliteľné)"
+            className="add-user-input"
+          />
+          <input
+            type="email"
+            value={newUserEmail}
+            onChange={(e) => setNewUserEmail(e.target.value)}
+            placeholder="Email"
+            className="add-user-input"
+            required
+          />
+          <select
+            value={newUserRole}
+            onChange={(e) => setNewUserRole(e.target.value as 'admin' | 'student' | 'team')}
+            className="add-user-select"
+          >
+            <option value="student">Študent</option>
+            <option value="team">Team</option>
+            <option value="admin">Administrátor</option>
+          </select>
+          <button type="submit" className="add-user-btn" disabled={addingUser}>
+            {addingUser ? 'Pridávam...' : 'Pridať používateľa'}
+          </button>
+        </form>
+
+        <hr className="users-separator" />
+
+        <h3>Existujúci používatelia</h3>
         {users.length === 0 ? (
           <p className="empty-message">Žiadni užívatelia v systéme</p>
         ) : (
@@ -107,17 +227,28 @@ export const UsersManagement = () => {
                         {user.role === 'admin' ? 'Administrátor' : user.role === 'team' ? 'Team' : 'Študent'}
                       </span>
                     </td>
-                    <td>{user.createdAt?.toLocaleDateString('sk-SK')}</td>
+                    <td>{user.createdAt?.toLocaleDateString('sk-SK') || '-'}</td>
                     <td>
-                      <select
-                        value={user.role}
-                        onChange={(e) => handleRoleChange(user.id, e.target.value as 'admin' | 'student' | 'team')}
-                        className="role-select"
-                      >
-                        <option value="student">Študent</option>
-                        <option value="team">Team</option>
-                        <option value="admin">Administrátor</option>
-                      </select>
+                      <div className="user-actions">
+                        <select
+                          value={user.role}
+                          onChange={(e) =>
+                            handleRoleChange(user.id, e.target.value as 'admin' | 'student' | 'team')
+                          }
+                          className="role-select"
+                        >
+                          <option value="student">Študent</option>
+                          <option value="team">Team</option>
+                          <option value="admin">Administrátor</option>
+                        </select>
+                        <button
+                          className="delete-user-btn"
+                          onClick={() => handleDeleteUser(user.id)}
+                          disabled={deletingUserId === user.id}
+                        >
+                          {deletingUserId === user.id ? 'Mažem...' : 'Vymazať'}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
