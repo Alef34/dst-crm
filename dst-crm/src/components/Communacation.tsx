@@ -35,7 +35,17 @@ interface PaymentInfo {
 
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 
-export const Communication: React.FC = () => {
+interface CommunicationProps {
+  selectedCohort?: string;
+}
+
+const getCohortFromVS = (vs?: string) => {
+  const clean = String(vs ?? "").trim();
+  if (clean.length < 4) return "";
+  return clean.slice(0, 4);
+};
+
+export const Communication: React.FC<CommunicationProps> = ({ selectedCohort = "all" }) => {
   // Central data + UI state for payment checks, filters, and email sending.
   const [students, setStudents] = useState<StudentData[]>([]);
   const [payments, setPayments] = useState<PaymentInfo[]>([]);
@@ -65,7 +75,11 @@ export const Communication: React.FC = () => {
   useEffect(() => {
     // One-shot load on mount: this component uses an immediate Firestore snapshot.
     loadAll();
-  }, []);
+  }, [selectedCohort]);
+
+  useEffect(() => {
+    setSelectedStudents(new Set());
+  }, [selectedCohort]);
 
   const loadAll = async () => {
     setLoading(true);
@@ -115,8 +129,20 @@ export const Communication: React.FC = () => {
         return as.localeCompare(bs);
       });
 
-      setStudents(studentsList);
-      setPayments(paymentsList);
+      const cohortStudents = selectedCohort === "all"
+        ? studentsList
+        : studentsList.filter((s) => getCohortFromVS(s.vs) === selectedCohort);
+      const cohortStudentIds = new Set(cohortStudents.map((s) => s.id));
+      const cohortPayments = selectedCohort === "all"
+        ? paymentsList
+        : paymentsList.filter((p) => {
+            const sid = String(p.matchedStudentId ?? "").trim();
+            if (sid && cohortStudentIds.has(sid)) return true;
+            return getCohortFromVS(p.vs) === selectedCohort;
+          });
+
+      setStudents(cohortStudents);
+      setPayments(cohortPayments);
     } catch (err) {
       console.error("Chyba pri načítaní:", err);
       setMessage("Chyba pri načítaní dát");

@@ -56,9 +56,16 @@ const toStringSafe = (v: any) => (v === undefined || v === null ? "" : String(v)
 
 interface StudentsManagementProps {
   onRemindersChanged?: (count: number) => void;
+  selectedCohort?: string;
 }
 
-export const StudentsManagement: React.FC<StudentsManagementProps> = ({ onRemindersChanged }) => {
+const getCohortFromVS = (vs?: string) => {
+  const clean = String(vs ?? "").trim();
+  if (clean.length < 4) return "";
+  return clean.slice(0, 4);
+};
+
+export const StudentsManagement: React.FC<StudentsManagementProps> = ({ onRemindersChanged, selectedCohort = "all" }) => {
   // Component combines two datasets (students + payments) into one admin view.
   const [students, setStudents] = useState<StudentData[]>([]);
   const [payments, setPayments] = useState<PaymentInfo[]>([]);
@@ -83,7 +90,7 @@ export const StudentsManagement: React.FC<StudentsManagementProps> = ({ onRemind
   useEffect(() => {
     // One-shot initial load bez realtime listenerov.
     loadAll();
-  }, []);
+  }, [selectedCohort]);
 
   const loadAll = async () => {
     setLoading(true);
@@ -135,15 +142,23 @@ export const StudentsManagement: React.FC<StudentsManagementProps> = ({ onRemind
         return as.localeCompare(bs);
       });
 
-      setStudents(studentsList);
-      setPayments(paymentsList);
-      const remindersCount = studentsList.filter((s) => s.noteNeedsReview).length;
+      const cohortStudents = selectedCohort === "all"
+        ? studentsList
+        : studentsList.filter((s) => getCohortFromVS(s.vs) === selectedCohort);
+      const cohortVSSet = new Set(cohortStudents.map((s) => String(s.vs ?? "").trim()).filter(Boolean));
+      const cohortPayments = selectedCohort === "all"
+        ? paymentsList
+        : paymentsList.filter((p) => cohortVSSet.has(String(p.vs ?? "").trim()));
+
+      setStudents(cohortStudents);
+      setPayments(cohortPayments);
+      const remindersCount = cohortStudents.filter((s) => s.noteNeedsReview).length;
       onRemindersChanged?.(remindersCount);
 
       // Draft-cache pattern: local edit buffer separated from original DB data.
       setDraftById((prev) => {
         const next = { ...prev };
-        for (const s of studentsList) {
+        for (const s of cohortStudents) {
           if (!next[s.id]) {
             next[s.id] = {
               name: s.name ?? "",

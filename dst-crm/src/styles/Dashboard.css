@@ -219,3 +219,27 @@
   font-size: 18px;
   color: #666;
 }
+
+.global-cohort-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: whitesmoke;
+  font-weight: 600;
+}
+
+.global-cohort-current {
+  font-size: 13px;
+  color: #ffa5eb;
+}
+
+.global-cohort-select {
+  min-width: 220px;
+  padding: 8px 10px;
+  border: 1px solid #d3d5d5;
+  border-radius: 6px;
+  background: #fff;
+  color: #4b4a4a;
+  font-size: 14px;
+}
