@@ -40,7 +40,19 @@ interface FinanceStats {
 interface StatisticsProps {
   selectedCohort?: string;
   onSelectedCohortChange?: (value: string) => void;
+  selectedInstallmentCheckpoint?: number;
+  onSelectedInstallmentCheckpointChange?: (value: number) => void;
 }
+
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+
+const getCurrentInstallmentCheckpoint = () => {
+  const month = new Date().getMonth(); // 0..11
+  // Sep..Dec => 1..4, Jan..Jun => 5..10, Jul/Aug => 10
+  if (month >= 8 && month <= 11) return month - 7;
+  if (month >= 0 && month <= 5) return month + 5;
+  return 10;
+};
 
 const normalizeVS = (value: unknown) =>
   value === undefined || value === null ? "" : String(value).trim();
@@ -60,6 +72,8 @@ const cohortLabel = (cohort: string) => {
 export const Statistics: React.FC<StatisticsProps> = ({
   selectedCohort,
   onSelectedCohortChange,
+  selectedInstallmentCheckpoint,
+  onSelectedInstallmentCheckpointChange,
 }) => {
   // Dashboard analytics state: tab switching + source datasets + region filter.
   const [tab, setTab] = useState<'overview' | 'finance' | 'students'>('overview');
@@ -68,9 +82,12 @@ export const Statistics: React.FC<StatisticsProps> = ({
   const [loading, setLoading] = useState(true);
   const [regionMode, setRegionMode] = useState<string>('all');
   const [localCohort, setLocalCohort] = useState<string>('all');
+  const [localInstallmentCheckpoint, setLocalInstallmentCheckpoint] = useState<number>(getCurrentInstallmentCheckpoint());
 
   const activeCohort = selectedCohort ?? localCohort;
   const setActiveCohort = onSelectedCohortChange ?? setLocalCohort;
+  const installmentCheckpoint = selectedInstallmentCheckpoint ?? localInstallmentCheckpoint;
+  const setInstallmentCheckpoint = onSelectedInstallmentCheckpointChange ?? setLocalInstallmentCheckpoint;
 
   const normalizeRegion = (rawValue: string) => {
     // Data-normalization pattern: map various region formats to one canonical code.
@@ -161,36 +178,21 @@ export const Statistics: React.FC<StatisticsProps> = ({
       return acc + (p.amount || 0);
     }, 0);
 
-    // Expected is time-dependent by academic month and period rules.
-    // Logic: school year starts in September (month 9).
-    // October: all, Nov-Dec-Jan: monthly only, Feb: monthly+half-year, Mar-Jul: monthly only.
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth() + 1; // 1-12
-    
-    // Determine current academic month (0 = September, 1 = October, ...)
-    let academicMonth = currentMonth - 9;
-    if (academicMonth <= 0) {
-      academicMonth += 12; // ak sme pred septembrom, pridaj 12
-    }
-
+    const idx = clamp(installmentCheckpoint || 1, 1, 10);
     let expected = 0;
     for (const student of relevantStudents) {
       const period = (student.period ?? "").toLowerCase();
       const monthlyAmount = student.amount || 0;
 
       if (period === "month" || period === "monthly") {
-        // Monthly period is expected every month
-        expected += monthlyAmount;
+        // Monthly students: cumulative expected by chosen installment checkpoint (1..10).
+        expected += monthlyAmount * idx;
       } else if (period === "half-year" || period === "halfyear" || period === "half year") {
-        // Half-year: February is the 5th academic month
-        if (academicMonth === 5) {
-          expected += monthlyAmount;
-        }
+        // Half-year students: first payment through installments 1..5, second after 5.
+        expected += idx <= 5 ? monthlyAmount : monthlyAmount * 2;
       } else if (period === "year" || period === "yearly") {
-        // Yearly: October is the 1st academic month
-        if (academicMonth === 1) {
-          expected += monthlyAmount;
-        }
+        // Yearly students: full yearly amount is expected for any checkpoint.
+        expected += monthlyAmount;
       }
     }
 
@@ -346,6 +348,22 @@ export const Statistics: React.FC<StatisticsProps> = ({
           {cohortOptions.map((cohort) => (
             <option key={cohort} value={cohort}>
               {cohortLabel(cohort)}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="cohort-filter-row">
+        <label htmlFor="checkpoint-select">Obdobie pre očakávané sumy:</label>
+        <select
+          id="checkpoint-select"
+          value={installmentCheckpoint}
+          onChange={(e) => setInstallmentCheckpoint(clamp(Number(e.target.value) || 1, 1, 10))}
+          className="cohort-select"
+        >
+          {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+            <option key={num} value={num}>
+              Splátka {num}
             </option>
           ))}
         </select>

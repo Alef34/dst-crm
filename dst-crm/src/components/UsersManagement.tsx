@@ -23,7 +23,7 @@ export const UsersManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserName, setNewUserName] = useState('');
-  const [newUserRole, setNewUserRole] = useState<'admin' | 'student' | 'team'>('student');
+  const [newUserRole, setNewUserRole] = useState<'admin' | 'team'>('team');
   const [addingUser, setAddingUser] = useState(false);
   const [deletingUserId, setDeletingUserId] = useState('');
   const [loading, setLoading] = useState(true);
@@ -96,7 +96,7 @@ export const UsersManagement = () => {
 
       setNewUserEmail('');
       setNewUserName('');
-      setNewUserRole('student');
+      setNewUserRole('team');
       setMessage('Používateľ bol pridaný do Firestore');
       setMessageType('success');
       await loadUsers();
@@ -188,10 +188,9 @@ export const UsersManagement = () => {
           />
           <select
             value={newUserRole}
-            onChange={(e) => setNewUserRole(e.target.value as 'admin' | 'student' | 'team')}
+            onChange={(e) => setNewUserRole(e.target.value as 'admin' | 'team')}
             className="add-user-select"
           >
-            <option value="student">Študent</option>
             <option value="team">Team</option>
             <option value="admin">Administrátor</option>
           </select>
