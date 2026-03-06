@@ -36,7 +36,17 @@ interface StudentShort {
 }
 type StatusFilter = "all" | "matched" | "unmatched" | "ambiguous";
 
-export const PaymentsManagement: React.FC = () => {
+interface PaymentsManagementProps {
+  selectedCohort?: string;
+}
+
+const getCohortFromVS = (vs?: string) => {
+  const clean = String(vs ?? "").trim();
+  if (clean.length < 4) return "";
+  return clean.slice(0, 4);
+};
+
+export const PaymentsManagement: React.FC<PaymentsManagementProps> = ({ selectedCohort = "all" }) => {
   // Main component state: payment data + UX states for operations and feedback.
   const [payments, setPayments] = useState<PaymentInfo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +69,7 @@ export const PaymentsManagement: React.FC = () => {
   useEffect(() => {
     // Mount-time fetch after first render.
     loadPayments();
-  }, []);
+  }, [selectedCohort]);
 
   const loadPayments = async () => {
     setLoading(true);
@@ -91,7 +101,30 @@ export const PaymentsManagement: React.FC = () => {
             : data.createdAt ?? null,
         });
       });
-      setPayments(list);
+
+      const studentsSnap = await getDocs(collection(db, "students"));
+      const byId = new Map<string, StudentShort>();
+      studentsSnap.forEach((s) => {
+        const data = s.data() as any;
+        byId.set(s.id, {
+          id: s.id,
+          name: data.name ?? "",
+          surname: data.surname ?? "",
+          vs: data.vs !== undefined && data.vs !== null ? String(data.vs) : "",
+          school: data.school ?? "",
+        });
+      });
+      const cohortPayments = selectedCohort === "all"
+        ? list
+        : list.filter((payment) => {
+            if (getCohortFromVS(payment.vs) === selectedCohort) return true;
+            const sid = String(payment.matchedStudentId ?? "").trim();
+            if (!sid) return false;
+            const student = byId.get(sid);
+            return getCohortFromVS(student?.vs) === selectedCohort;
+          });
+
+      setPayments(cohortPayments);
     } catch (err) {
       console.error("Chyba pri načítaní platieb:", err);
       setMessage("Chyba pri načítaní platieb");
@@ -290,6 +323,8 @@ export const PaymentsManagement: React.FC = () => {
     return (p.matchStatus ?? "unmatched") === statusFilter;
   });
 
+  const cohortTitle = selectedCohort === "all" ? "Všetky ročníky" : `Ročník ${selectedCohort}`;
+
   if (loading) {
     return (
       <div className="payments-management-container">Načítavam platby...</div>
@@ -303,6 +338,7 @@ export const PaymentsManagement: React.FC = () => {
         <p>
           Prehľad importovaných platieb, priraďovanie k študentom a ich správa
         </p>
+        <p style={{ marginTop: 8 }}>Aktívny filter ročníka: <b>{cohortTitle}</b></p>
       </div>
 
       {message && (

@@ -22,7 +22,15 @@ export const Dashboard = () => {
   const { user, role, isAdmin, isTeam } = useAuth();
   const [dashboardName, setDashboardName] = useState('');
   const [studentNoteReminderCount, setStudentNoteReminderCount] = useState(0);
+  const [globalCohort, setGlobalCohort] = useState('all');
+  const [cohortOptions, setCohortOptions] = useState<string[]>([]);
   const navigate = useNavigate();
+
+  const getCohortFromVS = (vs?: string) => {
+    const clean = String(vs ?? '').trim();
+    if (clean.length < 4) return '';
+    return clean.slice(0, 4);
+  };
 
   useEffect(() => {
     // Effect pattern: derive the display name with fallbacks (displayName -> students -> email).
@@ -93,6 +101,25 @@ export const Dashboard = () => {
     loadStudentNoteReminders();
   }, [isAdmin, adminTab]);
 
+  useEffect(() => {
+    const loadCohorts = async () => {
+      try {
+        const studentsSnap = await getDocs(collection(db, 'students'));
+        const values = new Set<string>();
+        studentsSnap.forEach((d) => {
+          const data = d.data() as any;
+          const cohort = getCohortFromVS(data.vs);
+          if (cohort) values.add(cohort);
+        });
+        setCohortOptions(Array.from(values).sort((a, b) => Number(b) - Number(a)));
+      } catch (error) {
+        console.error('Error loading cohort options:', error);
+      }
+    };
+
+    loadCohorts();
+  }, []);
+
   const handleLogout = async () => {
     try {
       // Explicit signOut + programmatic navigation via useNavigate.
@@ -101,6 +128,12 @@ export const Dashboard = () => {
     } catch (error) {
       console.error('Error during sign out:', error);
     }
+  };
+
+  const cohortLabel = (cohort: string) => {
+    if (!cohort || cohort === 'all') return 'Všetky ročníky';
+    const cls = cohort.slice(2, 4);
+    return `${cohort} (trieda ${Number(cls)}.)`;
   };
 
   return (
@@ -127,6 +160,21 @@ export const Dashboard = () => {
         {/* Role-based conditional rendering */}
         {isAdmin ? (
           <div className="admin-section">
+            <div className="global-cohort-row">
+              <span>Globálny ročník:</span>
+              <select
+                className="global-cohort-select"
+                value={globalCohort}
+                onChange={(e) => setGlobalCohort(e.target.value)}
+              >
+                <option value="all">Všetky ročníky</option>
+                {cohortOptions.map((cohort) => (
+                  <option key={cohort} value={cohort}>{cohortLabel(cohort)}</option>
+                ))}
+              </select>
+              {globalCohort !== 'all' && <span className="global-cohort-current">Aktívne: {cohortLabel(globalCohort)}</span>}
+            </div>
+
             <div className="admin-tabs">
               
               <button
@@ -173,16 +221,24 @@ export const Dashboard = () => {
             </div>
             {adminTab === 'import' && <ImportStudents />}
             {adminTab === 'users' && <UsersManagement />}
-            {adminTab === 'payments' && <PaymentsManagement />}
+            {adminTab === 'payments' && <PaymentsManagement selectedCohort={globalCohort} />}
             {adminTab === 'students' && (
-              <StudentsManagement onRemindersChanged={setStudentNoteReminderCount} />
+              <StudentsManagement onRemindersChanged={setStudentNoteReminderCount} selectedCohort={globalCohort} />
             )}
-            {adminTab === 'communication' && <Communication />}
-            {adminTab === 'statistics' && <Statistics />}
+            {adminTab === 'communication' && <Communication selectedCohort={globalCohort} />}
+            {adminTab === 'statistics' && (
+              <Statistics
+                selectedCohort={globalCohort}
+                onSelectedCohortChange={setGlobalCohort}
+              />
+            )}
           </div>
         ) : isTeam ? (
           <div className="team-section">
-            <Statistics />
+            <Statistics
+              selectedCohort={globalCohort}
+              onSelectedCohortChange={setGlobalCohort}
+            />
           </div>
         ) : (
           <UserProfile />

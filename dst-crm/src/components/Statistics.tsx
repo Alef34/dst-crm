@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   collection,
   getDocs,
@@ -19,6 +19,7 @@ interface StudentData {
   typeOfPayment?: string;
   amount?: number;
   period?: string;
+  vs?: string;
 }
 
 interface PaymentInfo {
@@ -36,14 +37,40 @@ interface FinanceStats {
   final: number;
 }
 
-export const Statistics: React.FC = () => {
+interface StatisticsProps {
+  selectedCohort?: string;
+  onSelectedCohortChange?: (value: string) => void;
+}
+
+const normalizeVS = (value: unknown) =>
+  value === undefined || value === null ? "" : String(value).trim();
+
+const getCohortFromVS = (vs?: string) => {
+  const clean = normalizeVS(vs).replace(/\s+/g, "");
+  if (clean.length < 4) return "";
+  return clean.slice(0, 4);
+};
+
+const cohortLabel = (cohort: string) => {
+  if (!cohort || cohort.length < 4) return cohort;
+  const classPart = cohort.slice(2, 4);
+  return `${cohort} (trieda ${Number(classPart)}.)`;
+};
+
+export const Statistics: React.FC<StatisticsProps> = ({
+  selectedCohort,
+  onSelectedCohortChange,
+}) => {
   // Dashboard analytics state: tab switching + source datasets + region filter.
   const [tab, setTab] = useState<'overview' | 'finance' | 'students'>('overview');
   const [students, setStudents] = useState<StudentData[]>([]);
   const [payments, setPayments] = useState<PaymentInfo[]>([]);
   const [loading, setLoading] = useState(true);
-  const [regions, setRegions] = useState<string[]>([]);
   const [regionMode, setRegionMode] = useState<string>('all');
+  const [localCohort, setLocalCohort] = useState<string>('all');
+
+  const activeCohort = selectedCohort ?? localCohort;
+  const setActiveCohort = onSelectedCohortChange ?? setLocalCohort;
 
   const normalizeRegion = (rawValue: string) => {
     // Data-normalization pattern: map various region formats to one canonical code.
@@ -91,6 +118,7 @@ export const Statistics: React.FC = () => {
           typeOfPayment: data.typeOfPayment ?? "",
           amount: typeof data.amount === "number" ? data.amount : Number(data.amount ?? 0),
           period: data.period ?? "",
+          vs: normalizeVS(data.vs),
         };
       });
 
@@ -107,10 +135,6 @@ export const Statistics: React.FC = () => {
           matchedStudentId: data.matchedStudentId ?? null,
         };
       });
-
-      // Derive unique regions for regional breakdowns.
-      const uniqueRegions = [...new Set(studentsList.map((s) => getStudentRegion(s)))];
-      setRegions(uniqueRegions.sort());
 
       setStudents(studentsList);
       setPayments(paymentsList);
@@ -258,15 +282,47 @@ export const Statistics: React.FC = () => {
     };
   };
 
-  const studentsStats = calculateStudentStats(students);
+  const cohortOptions = useMemo(() => {
+    const values = [...new Set(students.map((s) => getCohortFromVS(s.vs)).filter(Boolean))];
+    return values.sort((a, b) => Number(b) - Number(a));
+  }, [students]);
+
+  const filteredStudents = useMemo(() => {
+    if (activeCohort === 'all') return students;
+    return students.filter((s) => getCohortFromVS(s.vs) === activeCohort);
+  }, [students, activeCohort]);
+
+  const filteredStudentIds = useMemo(() => filteredStudents.map((s) => s.id), [filteredStudents]);
+  const filteredStudentIdSet = useMemo(() => new Set(filteredStudentIds), [filteredStudentIds]);
+
+  const filteredPayments = useMemo(() => {
+    if (activeCohort === 'all') return payments;
+    return payments.filter((p) => {
+      const id = (p.matchedStudentId ?? '').trim();
+      return !!id && filteredStudentIdSet.has(id);
+    });
+  }, [payments, activeCohort, filteredStudentIdSet]);
+
+  const regions = useMemo(() => {
+    const uniqueRegions = [...new Set(filteredStudents.map((s) => getStudentRegion(s)))];
+    return uniqueRegions.sort();
+  }, [filteredStudents]);
+
+  useEffect(() => {
+    if (regionMode !== 'all' && !regions.includes(regionMode)) {
+      setRegionMode('all');
+    }
+  }, [regionMode, regions]);
+
+  const studentsStats = calculateStudentStats(filteredStudents);
 
   if (loading) {
     return <div className="statistics-container">Načítavam štatistiky...</div>;
   }
 
-  const overallStats = calculateFinanceStats();
-  const totalStudents = students.length;
-  const totalPayments = payments.length;
+  const overallStats = activeCohort === 'all' ? calculateFinanceStats() : calculateFinanceStats(filteredStudentIds);
+  const totalStudents = filteredStudents.length;
+  const totalPayments = filteredPayments.length;
   const visibleRegions = regionMode === 'all'
     ? regions
     : regions.filter((region) => region === regionMode);
@@ -276,6 +332,23 @@ export const Statistics: React.FC = () => {
       <div className="statistics-header">
         <h2>Štatistiky</h2>
         <p>Prehľad platieb a finančných štatistík</p>
+      </div>
+
+      <div className="cohort-filter-row">
+        <label htmlFor="cohort-select">Ročník podľa VS:</label>
+        <select
+          id="cohort-select"
+          value={activeCohort}
+          onChange={(e) => setActiveCohort(e.target.value)}
+          className="cohort-select"
+        >
+          <option value="all">Všetky ročníky</option>
+          {cohortOptions.map((cohort) => (
+            <option key={cohort} value={cohort}>
+              {cohortLabel(cohort)}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Tapy */}
@@ -404,7 +477,7 @@ export const Statistics: React.FC = () => {
             </div>
             <div className="regions-grid">
               {visibleRegions.map((region) => {
-                const regionStudents = students
+                const regionStudents = filteredStudents
                   .filter((s) => getStudentRegion(s) === region)
                   .map(s => s.id);
                 const regionStats = calculateFinanceStats(regionStudents);
@@ -560,7 +633,7 @@ export const Statistics: React.FC = () => {
 
             <div className="regions-grid">
               {visibleRegions.map((region) => {
-                const regionStudentsData = students.filter((s) => getStudentRegion(s) === region);
+                const regionStudentsData = filteredStudents.filter((s) => getStudentRegion(s) === region);
                 const regionStudentStats = calculateStudentStats(regionStudentsData);
 
                 return (
