@@ -1,4 +1,4 @@
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, deleteUser } from 'firebase/auth';
 import { auth, db } from '../config/firebase';
 import { doc, setDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +17,7 @@ export const Login = () => {
 
   const isEmailAllowed = async (userEmail: string): Promise<boolean> => {
     try {
-      const normalizedEmail = userEmail.toLowerCase();
+      const normalizedEmail = userEmail.trim().toLowerCase();
 
       // Admin email bez whitelistu
       const adminEmail = import.meta.env.VITE_ADMIN_EMAIL?.toLowerCase();
@@ -34,7 +34,25 @@ export const Login = () => {
         getDocs(query(collection(db, 'users'), where('email', '==', normalizedEmail))),
       ]);
 
-      const isAllowed = !studentsSnapshot.empty || !usersSnapshot.empty;
+      let isAllowed = !studentsSnapshot.empty || !usersSnapshot.empty;
+
+      // Fallback for legacy records where email might not be normalized.
+      if (!isAllowed) {
+        const [allStudentsSnapshot, allUsersSnapshot] = await Promise.all([
+          getDocs(collection(db, 'students')),
+          getDocs(collection(db, 'users')),
+        ]);
+
+        const studentMatch = allStudentsSnapshot.docs.some(
+          (d) => String(d.data().mail ?? '').trim().toLowerCase() === normalizedEmail
+        );
+        const userMatch = allUsersSnapshot.docs.some(
+          (d) => String(d.data().email ?? '').trim().toLowerCase() === normalizedEmail
+        );
+
+        isAllowed = studentMatch || userMatch;
+      }
+
       console.log('Whitelist result:', isAllowed ? 'FOUND' : 'EMPTY');
       return isAllowed;
     } catch (error) {
@@ -86,20 +104,19 @@ export const Login = () => {
     setError('');
 
     try {
-      // Check whitelist before registration
-      const allowed = await isEmailAllowed(email);
-      
-      if (!allowed) {
-        // EN: This email does not have access to the app
-        setError('Tento email nemá prístup k aplikácii');
-        setLoading(false);
-        return;
-      }
-
       const result = await createUserWithEmailAndPassword(auth, email, password);
       const user = result.user;
 
       const normalizedEmail = (user.email ?? email).toLowerCase();
+
+      // With signedIn-only Firestore rules, whitelist check must happen after auth registration.
+      const allowed = await isEmailAllowed(normalizedEmail);
+      if (!allowed) {
+        await deleteUser(user);
+        // EN: This email does not have access to the app
+        setError('Tento email nemá prístup k aplikácii');
+        return;
+      }
 
       // If admin pre-created a role by email, keep that role after registration.
       const existingUserQ = query(collection(db, 'users'), where('email', '==', normalizedEmail));

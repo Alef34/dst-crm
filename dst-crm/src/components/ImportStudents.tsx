@@ -100,7 +100,7 @@ console.log("1");
             surname: student.surname || '',
             region: student.region || '',
             school: student.school || '',
-            mail: student.mail || '',
+            mail: String(student.mail || '').trim().toLowerCase(),
             telephoneNumber: student.telephoneNumber || '',
             typeOfPayment: student.typeOfPayment || '',
             period: student.period || '',
