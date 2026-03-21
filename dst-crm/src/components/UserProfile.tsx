@@ -174,12 +174,35 @@ export const UserProfile = () => {
 
     setIsSaving(true);
     try {
+      const editableFields: Array<keyof StudentData> = [
+        "name",
+        "surname",
+        "region",
+        "school",
+        "telephoneNumber",
+        "note",
+      ];
+
+      const changedFields: Partial<StudentData> = {};
+      for (const field of editableFields) {
+        const previousValue = String(studentData?.[field] ?? "").trim();
+        const nextValue = String(editedData?.[field] ?? "").trim();
+        if (previousValue !== nextValue) {
+          changedFields[field] = nextValue;
+        }
+      }
+
+      if (Object.keys(changedFields).length === 0) {
+        setIsEditing(false);
+        return;
+      }
+
       const previousNote = String(studentData?.note ?? "").trim();
-      const nextNote = String(editedData?.note ?? "").trim();
+      const nextNote = String(changedFields.note ?? studentData?.note ?? "").trim();
       const noteChanged = previousNote !== nextNote;
 
       const payload: Record<string, any> = {
-        ...editedData,
+        ...changedFields,
       };
 
       if (noteChanged) {
@@ -189,12 +212,18 @@ export const UserProfile = () => {
       }
 
       await updateDoc(doc(db, "students", studentDocId), payload);
-      setStudentData(editedData);
+      setStudentData((prev) => (prev ? { ...prev, ...changedFields } : prev));
+      setEditedData((prev) => (prev ? { ...prev, ...changedFields } : prev));
       setIsEditing(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving profile data:", error);
+      const isPermissionDenied = error?.code === "permission-denied";
       // EN: Error while saving data
-      alert("Chyba pri uložení údajov");
+      alert(
+        isPermissionDenied
+          ? "Nemáš povolenie upravovať tieto údaje. Kontaktuj administrátora."
+          : "Chyba pri uložení údajov"
+      );
     } finally {
       setIsSaving(false);
     }
