@@ -34,6 +34,7 @@ interface PaymentInfo {
 
 export const UserProfile = () => {
   const { user } = useAuth();
+  type EditableField = "name" | "surname" | "region" | "school" | "telephoneNumber" | "note";
   const [studentData, setStudentData] = useState<StudentData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -174,7 +175,7 @@ export const UserProfile = () => {
 
     setIsSaving(true);
     try {
-      const editableFields: Array<keyof StudentData> = [
+      const editableFields: EditableField[] = [
         "name",
         "surname",
         "region",
@@ -183,7 +184,7 @@ export const UserProfile = () => {
         "note",
       ];
 
-      const changedFields: Partial<StudentData> = {};
+      const changedFields: Partial<Record<EditableField, string>> = {};
       for (const field of editableFields) {
         const previousValue = String(studentData?.[field] ?? "").trim();
         const nextValue = String(editedData?.[field] ?? "").trim();
@@ -212,8 +213,24 @@ export const UserProfile = () => {
       }
 
       await updateDoc(doc(db, "students", studentDocId), payload);
-      setStudentData((prev) => (prev ? { ...prev, ...changedFields } : prev));
-      setEditedData((prev) => (prev ? { ...prev, ...changedFields } : prev));
+      setStudentData((prev) => {
+        if (!prev) return prev;
+        const next: StudentData = { ...prev };
+        for (const field of editableFields) {
+          const value = changedFields[field];
+          if (value !== undefined) next[field] = value;
+        }
+        return next;
+      });
+      setEditedData((prev) => {
+        if (!prev) return prev;
+        const next: StudentData = { ...prev };
+        for (const field of editableFields) {
+          const value = changedFields[field];
+          if (value !== undefined) next[field] = value;
+        }
+        return next;
+      });
       setIsEditing(false);
     } catch (error: any) {
       console.error("Error saving profile data:", error);
